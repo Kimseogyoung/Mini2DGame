@@ -16,11 +16,7 @@ public class Friend
     public string name;
 
 }
-public class Item
-{
-    public string name;
-    public int price;
-}
+
 public class Achievement
 {//업적
     public string name;

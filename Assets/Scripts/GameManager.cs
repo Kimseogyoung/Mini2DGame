@@ -7,18 +7,9 @@ public enum State { Title, Start, None, Schedule, Finish, End}
 public class Egg
 {
     public string name;
-    public string[] attributeNames;
     public int[] attributeValues;
     public bool[] isOpenhidden;//8 9 10 
     /*
-    public int cutenes;
-    public int reliable;
-    public int beauty;
-    public int activity;
-    public int intelligence;
-    public int sensitivity;
-    public int personality;
-    public int utilization;
 
     public int tmt;//0 
     public int laziness;//1
@@ -42,24 +33,32 @@ public class GameManager : Singleton<GameManager>
 
     public Egg egg;
 
+
+    public Dictionary<string, int[]> inventory=new Dictionary<string, int[]>();//물건 가구 책
+
     public int[] scheduleCount;
 
     public Friend[] friends;// 친구
-    public Item[] items; //소유한 아이템
+    //public Item[] items; //소유한 아이템
     public Achievement[] achievement; //달성한 업적
 
     public Event[] eventList;//게임 내 이벤트 목록
 
+
+
+
     [HideInInspector]
     public int[] selectedSchedule =new int[3];
+    public int[] changedAttrs = new int[11];
 
 
-    private int job_pay;
-    private int[] job_day = new int[7];
-    private int[] job_time = new int[3];
+
     void Start()
     {
-        
+        inventory.Add("Normal", new int[24]);
+        inventory.Add("Furniture", new int[24]);
+        inventory.Add("Book", new int[24]);
+
     }
 
     public void AddAttribute(int[] p_attribute)

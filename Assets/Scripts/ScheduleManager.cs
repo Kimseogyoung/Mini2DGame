@@ -216,7 +216,7 @@ public class ScheduleManager : MonoBehaviour
                 {
                     if (schedules[i + 4 * currentPage].attributeValues[j] != 0)
                     {
-                        str += GameManager.Instance.egg.attributeNames[j] + " " + schedules[i + 4 * currentPage].attributeValues[j];
+                        str += DatabaseManager.Instance.attributeNames[j] + " " + schedules[i + 4 * currentPage].attributeValues[j];
                     }
                 }
                 text_scheduleAttr[i].text = str;

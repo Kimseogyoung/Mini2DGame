@@ -23,6 +23,37 @@ public class DataParser : MonoBehaviour
         return new Vector2(float.Parse(lineValue[0]), float.Parse(lineValue[1]));
     }
     */
+
+    public Dictionary<int, Item> ItemParse(string _CSVFileName)
+    {
+        Dictionary<int, Item> itemDic = new Dictionary<int, Item>();
+
+        TextAsset csvData = Resources.Load<TextAsset>(_CSVFileName);
+        string[] data = csvData.text.Split(new char[] { '\n' });
+
+        for (int i = 1; i < data.Length; i++)
+        {
+            string[] row = data[i].Split(new char[] { ',' });
+            Item newItem = new Item();
+            newItem.name = row[1];
+            newItem.type = StringToEnum<ItemType>(row[2]);
+            
+            newItem.itemImage="Image/"+row[3];
+            
+            newItem.content = row[4];
+            for(int j=5; j < 18; j++)
+            {
+                if (!row[j].Equals( ""))
+                {
+                    newItem.effect[j - 5] = Int32.Parse(row[j]);
+                }
+
+            }
+            itemDic.Add(int.Parse(row[0]), newItem);
+
+        }
+        return itemDic;
+    }
     public Dictionary<int, string[]> EventInfoParse(string _CSVFileName)
     {
         Dictionary<int, string[]> eventDic = new Dictionary<int, string[]>();

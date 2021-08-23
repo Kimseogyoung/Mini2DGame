@@ -14,12 +14,14 @@ public class Scheduling : MonoBehaviour
     public GameObject energyBar;
     public GameObject intimacyBar;
     public GameObject clockStick;
+    private int[] changedAttributes;
 
     private int currentSchedule;//현재 진행되고있는 스케쥴
     private int[] selectedSchedule;//선택된 스케쥴의 idx저장
     // Start is called before the first frame update
     void Start()
     {
+        changedAttributes = new int[11];
         GameManager.Instance.state = State.Schedule;
         currentSchedule = 0;
         btn_nextSchedule.GetComponent<Button>().onClick.AddListener(OnClickNextScheduleButton);
@@ -61,6 +63,7 @@ public class Scheduling : MonoBehaviour
             currentSchedule = 0;
             ShowScheduleResult();
             GameManager.Instance.state = State.Finish;
+            GameManager.Instance.changedAttrs = changedAttributes;
             SceneManager.LoadScene("Scenes/01_Main");
 
             //MainUIManager.Instance.ShowMainRoomView();
@@ -209,7 +212,8 @@ public class Scheduling : MonoBehaviour
                 {
                     if (schedule.attributeValues[j] != 0)
                     {
-                        str2 += GameManager.Instance.egg.attributeNames[j] + " " + schedule.attributeValues[j] + " ";
+                        changedAttributes[j] += schedule.attributeValues[j];
+                        str2 += DatabaseManager.Instance.attributeNames[j] + " " + schedule.attributeValues[j] + " ";
                     }
                 }
 

@@ -5,12 +5,14 @@ using UnityEngine;
 //파싱한 데이터를 데이터베이스에서 저장 및 관
 public class DatabaseManager :Singleton<DatabaseManager>//싱글톤
 {
+    public string[] attributeNames;
     [SerializeField]
     public Schedule[] schedules;
     [SerializeField]
     public DayInfo[] days;
+
     public Dictionary<int,string[]> eventInfo;
-    
+    public Dictionary<int, Item> ItemsDic;
 
 
     public static bool isFinish= false;//정보 저장이 되었는지
@@ -30,6 +32,7 @@ public class DatabaseManager :Singleton<DatabaseManager>//싱글톤
         schedules = parser.ScheduleParse("스케쥴");
         eventInfo = parser.EventInfoParse("이벤트정보");
         days = parser.DayInfoParse("일차정보");
+        ItemsDic = parser.ItemParse("아이템 목록");
 
     }
     public Dialogue[] GetDialogue(string _CSVFileName, int startLine, int FinishLine)

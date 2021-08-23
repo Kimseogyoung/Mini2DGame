@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class MainUIManager : MonoBehaviour
 {
     public ScheduleManager scheduleManager;
+    public Inventory inventory;
+
     public GameObject roomUI;
     public GameObject roomObjects;
 
@@ -26,11 +28,15 @@ public class MainUIManager : MonoBehaviour
     public TextMeshProUGUI text_energy;
     public TextMeshProUGUI text_EggName;
     public TextMeshProUGUI text_playerName;
+    public TextMeshProUGUI text_MainContext;
+    public TextMeshProUGUI[] text_results;
     public TextMeshProUGUI text_dialogContext;
+    public Button btn_dialogueNext;
 
+    public Button btn_uiClean;
     public Button btn_uiOn;
     public Button btn_makeSchedule;
-    public Button btn_dialogueNext;
+    public Button btn_inventory;
 
 
     public Button miniNoteObject;
@@ -39,9 +45,14 @@ public class MainUIManager : MonoBehaviour
     public GameObject leftPage;
     
     public Button btn_miniNoteDel;
+
+
+    public Animator animatorDiary;
     public void Start()
     {
-       
+        DialogueManager.Instance.SetDontDestroyed();
+        DatabaseManager.Instance.SetDontDestroyed();
+        GameManager.Instance.SetDontDestroyed();
 
         CheckState();
         
@@ -50,25 +61,30 @@ public class MainUIManager : MonoBehaviour
         miniNoteObject.onClick.AddListener(ShowMiniNote);
         btn_makeSchedule.onClick.AddListener(OnClickMakeScheduleButton);
         btn_uiOn.onClick.AddListener(OnClickUIOnButton);
+        btn_uiClean.onClick.AddListener(OnClickUICleanButton);
         btn_miniNoteDel.onClick.AddListener(OnClickMiniNoteDel);
+        btn_dialogueNext.onClick.AddListener(OnClickNextDialogueButton);
+        btn_inventory.onClick.AddListener(inventory.UpInventory);
+
         //string[] layer = new string[] { "MainUI","RoomObject" };
         //Camera.main.cullingMask = LayerMask.GetMask(layer);
         //Camera.main.cullingMask = LayerMask.GetMask(layer);
     }
     void OnClickMiniNoteDel()
     {
+        animatorDiary.SetTrigger("ActiveFalse");
         miniNote.SetActive(false);
     }
     void ShowMiniNote()
     {
         RectTransform rectInti= miniNoteIntimacy.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject.GetComponent<RectTransform>();
-        rectInti.sizeDelta = new Vector2( 200 * ((float)GameManager.Instance.intimacy / 100), rectInti.sizeDelta.y);
+        rectInti.sizeDelta = new Vector2( 180 * ((float)GameManager.Instance.intimacy / 100), rectInti.sizeDelta.y);
 
         for (int i=0; i<11; i++)
         {
             GameObject obj = leftPage.transform.GetChild(i).gameObject.transform.GetChild(0).gameObject;
             RectTransform rectTranAttr = obj.transform.GetChild(0).gameObject.GetComponent<RectTransform>();
-            rectTranAttr.sizeDelta = new Vector2( rectTranAttr.sizeDelta.x, 60 * ((float)GameManager.Instance.egg.attributeValues[i] / 500));
+            rectTranAttr.sizeDelta = new Vector2( rectTranAttr.sizeDelta.x, 55 * ((float)GameManager.Instance.egg.attributeValues[i] / 500));
 
             TextMeshProUGUI objValueText = obj.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>();
             objValueText.text = GameManager.Instance.egg.attributeValues[i].ToString();
@@ -80,14 +96,15 @@ public class MainUIManager : MonoBehaviour
             }
             else
             {
-                objNameText.text = GameManager.Instance.egg.attributeNames[i];
+                objNameText.text = DatabaseManager.Instance.attributeNames[i];
             }
         }
-        
+        animatorDiary.SetTrigger("ActiveTrue");
         miniNote.SetActive(true);
     }
     void CheckState()
     {
+        UpdateUI();
         DayInfo dayinfo = DatabaseManager.Instance.days[GameManager.Instance.day];
         switch (GameManager.Instance.state)
         {
@@ -111,7 +128,7 @@ public class MainUIManager : MonoBehaviour
             case State.Finish:
                 if (dayinfo.dayFinishEventID != 0)
                 {
-                    Debug.Log("gi");
+                    Debug.Log("finish State");
                     string fileName = DatabaseManager.Instance.eventInfo[dayinfo.dayFinishEventID][0];
                     string[] lineNum = DatabaseManager.Instance.eventInfo[dayinfo.dayFinishEventID][1].Split(new char[] { '-' });
                     DialogueManager.Instance.Canvas.SetActive(true);
@@ -122,16 +139,160 @@ public class MainUIManager : MonoBehaviour
                 break;
         }
     }
+
+
+    private int currentDialogueIndex=0;
+    private string[] dialogueContexts;
+    private string[] resultStateContexts;
+    void ShowMainDialogue()
+    {
+        bool isFinish = false;
+        if (currentDialogueIndex >= dialogueContexts.Length)
+        {
+            isFinish = true;
+            currentDialogueIndex = 0;
+        }
+
+        switch (GameManager.Instance.state)
+        {
+            case State.Start:
+                if (isFinish)
+                {
+
+                }
+                break;
+            case State.Finish:
+                if (isFinish)
+                {
+                    GameManager.Instance.day++;
+                    GameManager.Instance.state = State.Start;
+                    resultPanel.SetActive(false);
+                    underDialoguePanel.SetActive(false);
+                    CheckState();
+                    //나중에 화면전환 검정색 애니메이션 추가요망
+                    //저장도 여기서
+                }
+                
+                //이때 연필 슥슥 효과음
+                text_results[currentDialogueIndex].text = resultStateContexts[currentDialogueIndex];
+                text_dialogContext.text = dialogueContexts[currentDialogueIndex];
+                break;
+        }
+    }
+    void OnClickNextDialogueButton()
+    {
+        currentDialogueIndex++;
+        ShowMainDialogue();
+
+    }
     void ShowResult()
     {
+        for(int i=0; i < 3; i++)
+        {
+            text_results[i].text = "";
+        }
+        List<string> dialogueContextList = new List<string>();
+        List<string> resultStateContextList = new List<string>();
+
+        //에너지
+        if (GameManager.Instance.energy >= 70)
+        {
+            dialogueContextList.Add("오늘 컨디션되게 좋았지!");
+            resultStateContextList.Add("좋음");
+        }
+        else if (GameManager.Instance.energy >= 30)
+        {
+            dialogueContextList.Add("살짝 피곤했던 것 같기도하고.. 많이 무리하는 건 힘들 것 같아.");
+            resultStateContextList.Add("괜찮음");
+        }
+        else{
+            dialogueContextList.Add("......완전 피곤해");
+            resultStateContextList.Add("나쁨");
+        }
+
+        //유대감
+        if (GameManager.Instance.intimacy >= 70)
+        {
+            dialogueContextList.Add(GameManager.Instance.egg.name+"랑은 잘 지내고 있어");
+            resultStateContextList.Add("좋음");
+        }
+        else if (GameManager.Instance.intimacy >= 30)
+        {
+            dialogueContextList.Add(GameManager.Instance.egg.name + "에게 신경을 좀 써야할 것 같아");
+            resultStateContextList.Add("보통");
+        }
+        else
+        {
+            dialogueContextList.Add(GameManager.Instance.egg.name + "랑은 솔직히 좀 어색하네..");
+            resultStateContextList.Add("나쁨");
+        }
+
+        //특성변화
+        int changeCount=0;
+        int BigChangeCount = 0;
+        string attrStr = "";
+        for(int i=0; i < GameManager.Instance.changedAttrs.Length; i++)
+        {
+            if (GameManager.Instance.changedAttrs[i] != 0)
+            {
+                if (changeCount % 3 == 2)
+                    attrStr += "\n";
+                if (i != 0)
+                    attrStr += ", ";
+                attrStr += DatabaseManager.Instance.attributeNames[i] + " " + GameManager.Instance.changedAttrs[i];
+                changeCount++;
+                if (GameManager.Instance.changedAttrs[i] >= 20)
+                    BigChangeCount++;
+            }
+            
+        }
+        
+        if (changeCount == 0)
+        {
+            attrStr += "변화 없음";
+            dialogueContextList.Add("그리고 오늘은 특성변화가 하나도 없네.\n좀 더 신경을 써 주어야 할 것 같다");
+        }
+        else if (changeCount <= 2)
+        {
+            if (BigChangeCount == 0)
+            {
+                dialogueContextList.Add("그리고 오늘 특성변화는 미미했다..\n없는 것 보단 나을 수도?");
+            }
+            else 
+            {
+                dialogueContextList.Add("그리고.. 꽤 변동이 있는 특성이 있었네~");
+            }
+
+        }
+        else if (changeCount <= 4)
+        {
+            if (BigChangeCount==0)
+            {
+                dialogueContextList.Add("그리고 미니에게는 적당히 특성변화가 있었다.");
+            }
+            else if(BigChangeCount<=2)
+            {
+                dialogueContextList.Add("그리고 오늘은 변화가 큰 특성도 있고, \n적당히 변경된 특성도 있고.. 밸런스가 좋네 ");
+            }
+            else
+            {
+                dialogueContextList.Add("그리고 오늘은 크게 변한 특성이 많았다!!\n알차게 보낸 하루였나봐?");
+            }
+        }
+        else
+        {
+            dialogueContextList.Add("그리고 오늘은 전체적으로 특성에 영향이 좀 있었나보다. ");
+        }
+
+        resultStateContextList.Add(attrStr);
+
+        dialogueContexts = dialogueContextList.ToArray();
+        resultStateContexts = resultStateContextList.ToArray();
+
         resultPanel.SetActive(true);
         underDialoguePanel.SetActive(true);
-        //클릭시
-        GameManager.Instance.day++;
-        GameManager.Instance.state = State.Start;
-        resultPanel.SetActive(false);
-        underDialoguePanel.SetActive(false);
-        CheckState();
+        ShowMainDialogue();
+       
     }
     void OnClickMakeScheduleButton()
     {
@@ -142,6 +303,10 @@ public class MainUIManager : MonoBehaviour
     void OnClickUIOnButton()
     {
         roomUI.SetActive(true);
+    }
+    void OnClickUICleanButton()
+    {
+        roomUI.SetActive(false);
     }
     void Update()
     {
