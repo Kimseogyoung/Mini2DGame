@@ -94,9 +94,9 @@ public class Scheduling : MonoBehaviour
             clockStick.transform.Rotate(vec);
 
 
-            rectTranEnergy.sizeDelta = new Vector2(Mathf.Min(400, rectTranEnergy.sizeDelta.x + 400 * ((float)DatabaseManager.Instance.schedules[selectedSchedule[currentSchedule]].energy / 10000)),
+            rectTranEnergy.sizeDelta = new Vector2(Mathf.Min(400, rectTranEnergy.sizeDelta.x + 400 * ((float)DatabaseManager.Instance.scheduleDic[selectedSchedule[currentSchedule]].energy / 10000)),
                 rectTranEnergy.sizeDelta.y);
-            rectTranIntimacy.sizeDelta = new Vector2(Mathf.Min(400, rectTranIntimacy.sizeDelta.x + 400 * ((float)DatabaseManager.Instance.schedules[selectedSchedule[currentSchedule]].intimacy / 10000)),
+            rectTranIntimacy.sizeDelta = new Vector2(Mathf.Min(400, rectTranIntimacy.sizeDelta.x + 400 * ((float)DatabaseManager.Instance.scheduleDic[selectedSchedule[currentSchedule]].intimacy / 10000)),
                 rectTranIntimacy.sizeDelta.y);
 
 
@@ -108,7 +108,7 @@ public class Scheduling : MonoBehaviour
 
 
         btn_nextSchedule.SetActive(false);
-        Schedule schedule = DatabaseManager.Instance.schedules[selectedSchedule[currentSchedule]];
+        Schedule schedule = DatabaseManager.Instance.scheduleDic[selectedSchedule[currentSchedule]];
         string str = "";
         switch (currentSchedule)
         {

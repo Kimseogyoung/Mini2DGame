@@ -7,14 +7,19 @@ public enum ItemType { Available, Normal, Book, Furniture };
 
 public class Item 
 {
-    
 
+    //고정
+    public int id;
     public string name;
     public string content;
     public ItemType type;
     public int[] effect=new int[13];
-
     public string itemImage;
+
+    //
+    public int count=1;
+    public bool active=false;
+
 
     // Start is called before the first frame update
     void Start()

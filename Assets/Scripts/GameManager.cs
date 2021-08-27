@@ -18,6 +18,21 @@ public class Egg
 
 }
 
+public class ItemState
+{
+    public bool active;
+    public int count;
+    public ItemState(bool a, int c)
+    {
+        active = a;
+        count = c;
+    }
+    public ItemState(int c)
+    {
+        active = false;
+        count = c;
+    }
+}
 
 [System.Serializable]
 public class GameManager : Singleton<GameManager>
@@ -34,7 +49,8 @@ public class GameManager : Singleton<GameManager>
     public Egg egg;
 
 
-    public Dictionary<string, int[]> inventory=new Dictionary<string, int[]>();//물건 가구 책
+
+    public Dictionary<string, Dictionary<int, Item>> inven = new Dictionary<string, Dictionary<int, Item>>();
 
     public int[] scheduleCount;
 
@@ -51,14 +67,47 @@ public class GameManager : Singleton<GameManager>
     public int[] selectedSchedule =new int[3];
     public int[] changedAttrs = new int[11];
 
-
-
-    void Start()
+    void Awake()
     {
-        inventory.Add("Normal", new int[24]);
-        inventory.Add("Furniture", new int[24]);
-        inventory.Add("Book", new int[24]);
 
+        inven.Add("Normal", new Dictionary<int, Item>());
+        inven.Add("Furniture", new Dictionary<int, Item>());
+        inven.Add("Book", new Dictionary<int, Item>());
+        
+
+        //추후삭제//////////////////////////////////////////////
+        if (!GameManager.Instance.inven["Normal"].ContainsKey(1))
+        {
+            GameManager.Instance.inven["Normal"].Add(1, DatabaseManager.Instance.ItemsDic[1]);
+            inven["Normal"][1].count = 3;
+        }
+        if (!GameManager.Instance.inven["Normal"].ContainsKey(4))
+        {
+
+            GameManager.Instance.inven["Normal"].Add(4, DatabaseManager.Instance.ItemsDic[4]);
+        }
+        if (!GameManager.Instance.inven["Book"].ContainsKey(1000))
+        {
+
+            GameManager.Instance.inven["Book"].Add(1000, DatabaseManager.Instance.ItemsDic[1000]);
+        }
+        if (!GameManager.Instance.inven["Furniture"].ContainsKey(200))
+        {
+
+            GameManager.Instance.inven["Furniture"].Add(200, DatabaseManager.Instance.ItemsDic[200]);
+            GameManager.Instance.inven["Furniture"][200].active = true;
+        }
+        if (!GameManager.Instance.inven["Furniture"].ContainsKey(100))
+        {
+
+            GameManager.Instance.inven["Furniture"].Add(100, DatabaseManager.Instance.ItemsDic[100]);
+            GameManager.Instance.inven["Furniture"][100].active = true;
+        }
+        if (!GameManager.Instance.inven["Furniture"].ContainsKey(101))
+        {
+
+            GameManager.Instance.inven["Furniture"].Add(101, DatabaseManager.Instance.ItemsDic[101]);
+        }
     }
 
     public void AddAttribute(int[] p_attribute)
@@ -123,5 +172,6 @@ public class GameManager : Singleton<GameManager>
         }
         return result;
     }
+
 
 }

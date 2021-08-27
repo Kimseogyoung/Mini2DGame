@@ -30,8 +30,9 @@ public class Slot : MonoBehaviour
 
     public void ItemClick()
     {
-        if (item != null)
-            inven.UpdateItemDetails(item);
+        
+        inven.UpdateItemDetails(this);
+
     }
     
     private void SetColor(float alpha)
@@ -45,11 +46,11 @@ public class Slot : MonoBehaviour
     {
         item = _item;
         itemCount = _count;
-        Debug.Log(item.itemImage);
+
         itemImage.sprite = Resources.Load<Sprite>(item.itemImage);
            
 
-        if (item.type != ItemType.Normal)
+        if (item.type == ItemType.Available)
         {
             go_CountImage.SetActive(true);
             text_count.text = itemCount.ToString();
@@ -62,14 +63,17 @@ public class Slot : MonoBehaviour
 
         SetColor(255);
     }
+
     public void SetSlotCount(int _count)
     {///해당 슬롯 아이템 갯수 업데이트
         //count만큼 증가
+
         itemCount += _count;
         text_count.text = itemCount.ToString();
-
+        GameManager.Instance.inven[item.type == ItemType.Available ? "Normal" : item.type.ToString()][item.id].count = itemCount;
         if (itemCount <= 0)
         {
+            GameManager.Instance.inven[item.type == ItemType.Available ? "Normal" : item.type.ToString()].Remove(item.id);
             ClearSlot();
         }
     }

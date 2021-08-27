@@ -7,7 +7,7 @@ public class DatabaseManager :Singleton<DatabaseManager>//싱글톤
 {
     public string[] attributeNames;
     [SerializeField]
-    public Schedule[] schedules;
+    public Dictionary<int, Schedule> scheduleDic;
     [SerializeField]
     public DayInfo[] days;
 
@@ -29,7 +29,7 @@ public class DatabaseManager :Singleton<DatabaseManager>//싱글톤
     public void GetSchedule()
     {
         DataParser parser = GetComponent<DataParser>();
-        schedules = parser.ScheduleParse("스케쥴");
+        scheduleDic = parser.ScheduleParse("스케쥴");
         eventInfo = parser.EventInfoParse("이벤트정보");
         days = parser.DayInfoParse("일차정보");
         ItemsDic = parser.ItemParse("아이템 목록");

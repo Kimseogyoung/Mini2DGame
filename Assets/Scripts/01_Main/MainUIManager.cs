@@ -46,6 +46,7 @@ public class MainUIManager : MonoBehaviour
     
     public Button btn_miniNoteDel;
 
+    
 
     public Animator animatorDiary;
     public void Start()

@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class ScheduleManager : MonoBehaviour
 {
 
-
+    
     public GameObject schedulePanel;
     public GameObject scheduleDialogueObject;
     //selecting part
@@ -19,6 +19,11 @@ public class ScheduleManager : MonoBehaviour
     public GameObject btn_start;
     public TextMeshProUGUI text_moneymessage;
 
+    public GameObject selectSlotGroup;
+    public TextMeshProUGUI text_selectSlotGroup;
+
+
+    //
     private int[] selectedSchedule;//선택된 스케쥴의 idx저장
     private int maxPage = 4;
 
@@ -30,9 +35,11 @@ public class ScheduleManager : MonoBehaviour
     private TextMeshProUGUI[] text_selectedScheduleName;
     private Button[] btn_deleteSchedule;
 
+    private ScheduleSlot[] scheduleSlots;
+    
 
     //scheduling part
-    
+
     private void Awake()
     {
        
@@ -83,20 +90,77 @@ public class ScheduleManager : MonoBehaviour
         btn_nextPage.GetComponent<Button>().onClick.AddListener(OnClickNextButton);
         btn_start.GetComponent<Button>().onClick.AddListener(OnClickStartButton);
         
-        
-        
+        scheduleSlots=selectSlotGroup.GetComponentsInChildren<ScheduleSlot>();
+
     }
 
 
-  
+    private int check;
+    public void ShowSelectBookOrFriend(int id=0)
+    {
+        if (id != 0)
+        {
+            selectedSchedule[check] = id;
+            Debug.Log(check + "id"+selectedSchedule[check]);
+        }
+        if (++check == 3)
+        {
+            GameManager.Instance.selectedSchedule = selectedSchedule;
+            schedulePanel.SetActive(false);
+            scheduleDialogueObject.SetActive(false);
+            SceneManager.LoadScene("Scenes/02_Schedule");
+            return;
+        }
+
+        
+        if (selectedSchedule[check] == 5 || selectedSchedule[check] == 15)
+        {
+            List<Item> list=new List<Item>();
+            if (selectedSchedule[check] == 5)
+            {
+                text_selectSlotGroup.text = (check + 1) + "번 일정 책 고르기";
+                list= new List<Item>(GameManager.Instance.inven["Book"].Values);
+            }
+            else
+            {
+                text_selectSlotGroup.text = (check + 1) + "번 일정 연락할 친구 선택하기";
+                //list= new List<Item>(GameManager.Instance.inven["Book"].Values);
+            }
+            
+                selectSlotGroup.SetActive(true);
+                
+                if (selectedSchedule[check] == 5)
+                {
+                    
+                    for (int i = 0; i < scheduleSlots.Length; i++)
+                    {
+                        if (list.Count > i)
+                        {
+                            scheduleSlots[i].SetSlot(list[i]);
+                        }
+                        else
+                        {
+                            scheduleSlots[i].SetSlot(null);
+                        }
+
+                    }
+                }
+        }
+        else
+        {
+            selectSlotGroup.SetActive(false);
+            ShowSelectBookOrFriend();
+         }
+
+
+    }
+
     public void OnClickStartButton()
     {
+        check = -1;
+        ShowSelectBookOrFriend();
         
-        GameManager.Instance.selectedSchedule = selectedSchedule;
-
-        schedulePanel.SetActive(false);
-        scheduleDialogueObject.SetActive(false);
-        SceneManager.LoadScene("Scenes/02_Schedule");
+        
     }
 
 
@@ -124,27 +188,33 @@ public class ScheduleManager : MonoBehaviour
     {
         int count = 0;
         int currentMoney = GameManager.Instance.money;
-        
+        bool bookCheck=true;
         for (int i = 0; i < 3; i++)
         {
             if (selectedSchedule[i] != -1)
             {
                 count++;
 
-                currentMoney += DatabaseManager.Instance.schedules[selectedSchedule[i]].money;
+                currentMoney += DatabaseManager.Instance.scheduleDic[selectedSchedule[i]].money;
                 if (currentMoney < 0)
                 {
                     text_moneymessage.text = "스케쥴을 수행하기 위한 돈이 부족합니다.";
                     break;
                 }
-
+                if (selectedSchedule[i] == 5 && GameManager.Instance.inven["Book"].Count <= 0)
+                {
+                    bookCheck = false;
+                    text_moneymessage.text = "읽을 수 있는 책이 없습니다.";
+                    break;
+                }
                 text_moneymessage.text = "";
                 
 
             }
         }
+        
 
-        if (count >= 3 && currentMoney>=0) btn_start.SetActive(true);
+        if (count >= 3 && currentMoney>=0 && bookCheck) btn_start.SetActive(true);
         else
         {
             btn_start.SetActive(false);
@@ -170,7 +240,7 @@ public class ScheduleManager : MonoBehaviour
             {
                 selectedSchedule[i] = btnnum + (4 * currentPage);
                 Debug.Log("this is " + btnnum + " " + currentPage + " " + selectedSchedule[i]);
-                text_selectedScheduleName[i].text = DatabaseManager.Instance.schedules[selectedSchedule[i]].name;
+                text_selectedScheduleName[i].text = DatabaseManager.Instance.scheduleDic[selectedSchedule[i]].name;
                 selectedScheduleObject[i].SetActive(true);
                 break;
             }
@@ -199,7 +269,7 @@ public class ScheduleManager : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            Schedule[] schedules = DatabaseManager.Instance.schedules;
+            List<Schedule> schedules = new List<Schedule>(DatabaseManager.Instance.scheduleDic.Values);
             if (schedules[i + 4 * currentPage] != null)
             {
                 text_scheduleName[i].text = schedules[i + 4 * currentPage].name;

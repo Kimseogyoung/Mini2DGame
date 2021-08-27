@@ -35,6 +35,7 @@ public class DataParser : MonoBehaviour
         {
             string[] row = data[i].Split(new char[] { ',' });
             Item newItem = new Item();
+            newItem.id= Int32.Parse(row[0]);
             newItem.name = row[1];
             newItem.type = StringToEnum<ItemType>(row[2]);
             
@@ -104,9 +105,9 @@ public class DataParser : MonoBehaviour
         }
         return dayInfoList.ToArray();
     }
-    public Schedule[] ScheduleParse(string _CSVFileName)
+    public Dictionary<int, Schedule> ScheduleParse(string _CSVFileName)
     {
-        List<Schedule> scheduleList = new List<Schedule>();
+        Dictionary<int, Schedule> scheduleDic = new Dictionary<int, Schedule>();
         TextAsset csvData = Resources.Load<TextAsset>(_CSVFileName);
         string[] data = csvData.text.Split(new char[] { '\n' });
 
@@ -140,10 +141,10 @@ public class DataParser : MonoBehaviour
             schedule.photo= row[17].Split(new char[] { '-' });
 
 
-            scheduleList.Add(schedule);
+            scheduleDic.Add(int.Parse(row[0]),schedule);
 
         }
-        return scheduleList.ToArray();
+        return scheduleDic;
     }
     public Dialogue[] DialogueParse(string _CSVFileName,int startLine,int FinishLine)
     {
