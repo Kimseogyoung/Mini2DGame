@@ -124,12 +124,16 @@ public class GameManager : Singleton<GameManager>
     }
 
 
-    public bool IsMoneyMinus(int value)
+    public bool AddMoney(int value)
     {
-        bool result = false;
+        bool result =true;
         if (value + money < 0)
         {
-            result = true;
+            result = false;
+        }
+        else
+        {
+            money += value;
         }
        
         return result;

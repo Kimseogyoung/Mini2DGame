@@ -6,14 +6,21 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class Scheduling : MonoBehaviour
 {
+    public Shop shop;
+
+
     public TextMeshProUGUI text_currentScheduleName;
     public TextMeshProUGUI text_currentStateContext;
     public Image schedulePhoto;
     public GameObject currentImageObject;
     public GameObject btn_nextSchedule;
+    
     public GameObject energyBar;
     public GameObject intimacyBar;
     public GameObject clockStick;
+
+    public Button btn_nextSchedule2;
+
     private int[] changedAttributes;
 
     private int currentSchedule;//현재 진행되고있는 스케쥴
@@ -25,6 +32,7 @@ public class Scheduling : MonoBehaviour
         GameManager.Instance.state = State.Schedule;
         currentSchedule = 0;
         btn_nextSchedule.GetComponent<Button>().onClick.AddListener(OnClickNextScheduleButton);
+        btn_nextSchedule2.onClick.AddListener(OnClickNextScheduleButton);
         selectedSchedule = GameManager.Instance.selectedSchedule;
 
         InitScheduling();
@@ -54,8 +62,11 @@ public class Scheduling : MonoBehaviour
     {
         if (++currentSchedule <= 2)
         {
+            if (selectedSchedule[currentSchedule-1] == 1)
+            {
+                shop.FinishShopping();
+            }
             StopAllCoroutines();
-
             InitScheduling();
         }
         else
@@ -66,9 +77,6 @@ public class Scheduling : MonoBehaviour
             GameManager.Instance.changedAttrs = changedAttributes;
             SceneManager.LoadScene("Scenes/01_Main");
 
-            //MainUIManager.Instance.ShowMainRoomView();
-            //GameManager.Instance.day++;
-            //MainUIManager.Instance.UpdateTopUI();
         }
 
     }
@@ -79,6 +87,7 @@ public class Scheduling : MonoBehaviour
     }
     IEnumerator MoveClockStickAndEnergy()
     {
+
         clockStick.transform.localEulerAngles = new Vector3(0, 0, -90*(1+currentSchedule));
         RectTransform rectTranEnergy = energyBar.GetComponent<RectTransform>();
         rectTranEnergy.sizeDelta = new Vector2(400 * ((float)GameManager.Instance.energy / 100), rectTranEnergy.sizeDelta.y);
@@ -124,111 +133,120 @@ public class Scheduling : MonoBehaviour
         }
         text_currentScheduleName.text = str + schedule.name;
 
-
-        for (int i = 0; i < 6; i++)
+        if (selectedSchedule[currentSchedule] != 1)
         {
-            if ((schedule.dialogueContext.Length > i))
-                text_currentStateContext.text = schedule.dialogueContext[i].Replace("ⓜ", GameManager.Instance.egg.name);         
-            else
-                text_currentStateContext.text = "...";
-
-            if (i != 5)
+            for (int i = 0; i < 6; i++)
             {
-                
-                schedulePhoto.sprite = Resources.Load<Sprite>("Image/schedulePhoto/" + schedule.photo[i%2]);
-                yield return new WaitForSeconds(2.0f);
-            }
-            else
-            {
-                yield return new WaitForSeconds(1.0f);
-            }
-            
+                if ((schedule.dialogueContext.Length > i))
+                    text_currentStateContext.text = schedule.dialogueContext[i].Replace("ⓜ", GameManager.Instance.egg.name);
+                else
+                    text_currentStateContext.text = "...";
 
-        }
-
-
-        text_currentStateContext.text = "";
-
-        GameManager.Instance.money += schedule.money;
-        if (schedule.money>0)
-        {
-            text_currentStateContext.text += schedule.money + " 원을 벌었습니다!\n";
-        }
-        else if(schedule.money<0)
-        {
-            text_currentStateContext.text += (-schedule.money)+ " 원을 사용했습니다!\n";
-        }
-
-
-        if (GameManager.Instance.AddEnergy(schedule.energy))
-        {
-            if (schedule.energy > 0)
-            {
-                yield return new WaitForSeconds(0.5f);
-                text_currentStateContext.text += "푹 쉬어서 에너지가" + schedule.energy + " 만큼 증가했습니다.\n";
-            }
-            else if (schedule.energy < 0)
-            {
-                yield return new WaitForSeconds(0.5f);
-                text_currentStateContext.text += "피곤하여 에너지가 "  + schedule.energy + " 만큼 감소했습니다.\n";
-            }
-        }
-        else
-        {
-            text_currentStateContext.text += "에너지가 바닥났습니다..\n";
-        }
-
-        if (GameManager.Instance.AddIntimacy(schedule.intimacy))
-        {
-            if (schedule.intimacy > 0)
-            {
-                yield return new WaitForSeconds(0.5f);
-                text_currentStateContext.text += "유대감이 " + schedule.intimacy + " 만큼 증가했습니다.\n";
-            }
-            else if (schedule.intimacy < 0)
-            {
-                yield return new WaitForSeconds(0.5f);
-                text_currentStateContext.text += "유대감이 " + schedule.intimacy + " 만큼 감소했습니다.\n";
-            }
-
-            bool changed = false;
-            for (int j = 0; j < 11; j++)
-            {
-                if (schedule.attributeValues[j] != 0)
+                if (i != 5)
                 {
-                    changed = true;
-                    break;
+
+                    schedulePhoto.sprite = Resources.Load<Sprite>("Image/schedulePhoto/" + schedule.photo[i % 2]);
+                    yield return new WaitForSeconds(2.0f);
+                }
+                else
+                {
+                    yield return new WaitForSeconds(1.0f);
+                }
+
+
+            }
+
+
+            text_currentStateContext.text = "";
+
+            GameManager.Instance.money += schedule.money;
+            if (schedule.money > 0)
+            {
+                text_currentStateContext.text += schedule.money + " 원을 벌었습니다!\n";
+            }
+            else if (schedule.money < 0)
+            {
+                text_currentStateContext.text += (-schedule.money) + " 원을 사용했습니다!\n";
+            }
+
+
+            if (GameManager.Instance.AddEnergy(schedule.energy))
+            {
+                if (schedule.energy > 0)
+                {
+                    yield return new WaitForSeconds(0.5f);
+                    text_currentStateContext.text += "푹 쉬어서 에너지가" + schedule.energy + " 만큼 증가했습니다.\n";
+                }
+                else if (schedule.energy < 0)
+                {
+                    yield return new WaitForSeconds(0.5f);
+                    text_currentStateContext.text += "피곤하여 에너지가 " + schedule.energy + " 만큼 감소했습니다.\n";
                 }
             }
-            yield return new WaitForSeconds(0.5f);
-            string str2 = "";
-            if (changed)
+            else
             {
-                GameManager.Instance.AddAttribute(schedule.attributeValues);
+                text_currentStateContext.text += "에너지가 바닥났습니다..\n";
+            }
 
-                str2 = "미니의 특성이 변화했습니다!\n";
+            if (GameManager.Instance.AddIntimacy(schedule.intimacy))
+            {
+                if (schedule.intimacy > 0)
+                {
+                    yield return new WaitForSeconds(0.5f);
+                    text_currentStateContext.text += "유대감이 " + schedule.intimacy + " 만큼 증가했습니다.\n";
+                }
+                else if (schedule.intimacy < 0)
+                {
+                    yield return new WaitForSeconds(0.5f);
+                    text_currentStateContext.text += "유대감이 " + schedule.intimacy + " 만큼 감소했습니다.\n";
+                }
 
+                bool changed = false;
                 for (int j = 0; j < 11; j++)
                 {
                     if (schedule.attributeValues[j] != 0)
                     {
-                        changedAttributes[j] += schedule.attributeValues[j];
-                        str2 += DatabaseManager.Instance.attributeNames[j] + " " + schedule.attributeValues[j] + " ";
+                        changed = true;
+                        break;
                     }
                 }
+                yield return new WaitForSeconds(0.5f);
+                string str2 = "";
+                if (changed)
+                {
+                    GameManager.Instance.AddAttribute(schedule.attributeValues);
 
+                    str2 = "미니의 특성이 변화했습니다!\n";
+
+                    for (int j = 0; j < 11; j++)
+                    {
+                        if (schedule.attributeValues[j] != 0)
+                        {
+                            changedAttributes[j] += schedule.attributeValues[j];
+                            str2 += DatabaseManager.Instance.attributeNames[j] + " " + schedule.attributeValues[j] + " ";
+                        }
+                    }
+
+                }
+                else
+                {
+                    str2 = "미니가 학습한 특성이 없습니다.\n";
+                }
+                yield return new WaitForSeconds(0.2f);
+                text_currentStateContext.text += str2;
             }
             else
             {
-                str2 = "미니가 학습한 특성이 없습니다.\n";
+                text_currentStateContext.text += "미니와 사이가 나빠져 미니가 아무것도 학습하지 않았습니다.\n";
             }
-            yield return new WaitForSeconds(0.2f);
-            text_currentStateContext.text +=   str2;
         }
         else
         {
-            text_currentStateContext.text += "미니와 사이가 나빠져 미니가 아무것도 학습하지 않았습니다.\n";
+            GameManager.Instance.AddEnergy(schedule.energy);
+            shop.InitShopping();
         }
+
+        
 
         btn_nextSchedule.SetActive(true);
     }

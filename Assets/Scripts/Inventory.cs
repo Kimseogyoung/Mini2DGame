@@ -166,21 +166,8 @@ public class Inventory : MonoBehaviour
             text_selectedItemName.text = item.name;
             text_selectedItemInfo.text = item.content;
 
-            string str = "";
-            for (int i = 0; i < 13; i++)
-            {
-                if (i < 2)
-                {
 
-                }
-                else
-                {
-                    if(item.effect[i]!=0)
-                        str += DatabaseManager.Instance.attributeNames[i - 2] + " " + item.effect[i]+"  ";
-                }
-
-            }
-            text_selectedItemEffect.text = str;
+            text_selectedItemEffect.text = DatabaseManager.Instance.GetItemEffectString(item);
         }
         else
         {
@@ -236,11 +223,16 @@ public class Inventory : MonoBehaviour
         inventotryBackPanel.SetActive(false);
         animator.SetTrigger("ActiveFalse");
     }
+    public void ResetOutLine()
+    {
+        for (int i = 0; i < slots.Length; i++)
+            slots[i].SetOutLine(false);
+    }
     public void UpdateInventory()
     {
-        
 
 
+        ResetOutLine();
         List<Item> itemList =new List<Item>(GameManager.Instance.inven[currentSelectedType.ToString()].Values);
         for (int i=0; i<12; i++)
         {

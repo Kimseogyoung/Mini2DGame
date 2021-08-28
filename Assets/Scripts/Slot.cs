@@ -14,12 +14,12 @@ public class Slot : MonoBehaviour
     public TextMeshProUGUI text_count;
     public GameObject go_CountImage;
 
-
+    private Outline outline;
     // Start is called before the first frame update
     void Start()
     {
         gameObject.GetComponent<Button>().onClick.AddListener(ItemClick);
-        
+        outline = gameObject.GetComponent<Outline>();
     }
 
     // Update is called once per frame
@@ -27,12 +27,16 @@ public class Slot : MonoBehaviour
     {
         
     }
+    public void SetOutLine(bool value)
+    {
+        outline.enabled = value;
+    }
 
     public void ItemClick()
     {
-        
+        inven.ResetOutLine();
         inven.UpdateItemDetails(this);
-
+        SetOutLine(true);
     }
     
     private void SetColor(float alpha)

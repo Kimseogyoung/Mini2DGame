@@ -50,7 +50,10 @@ public class DataParser : MonoBehaviour
                 }
 
             }
+            newItem.price = int.Parse(row[18]);
             itemDic.Add(int.Parse(row[0]), newItem);
+            
+            DatabaseManager.Instance.typeItemDic[newItem.type].Add(newItem.id);
 
         }
         return itemDic;

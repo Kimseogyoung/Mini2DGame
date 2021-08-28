@@ -239,7 +239,7 @@ public class ScheduleManager : MonoBehaviour
             if (selectedSchedule[i] == -1)
             {
                 selectedSchedule[i] = btnnum + (4 * currentPage);
-                Debug.Log("this is " + btnnum + " " + currentPage + " " + selectedSchedule[i]);
+
                 text_selectedScheduleName[i].text = DatabaseManager.Instance.scheduleDic[selectedSchedule[i]].name;
                 selectedScheduleObject[i].SetActive(true);
                 break;

@@ -14,6 +14,7 @@ public class DatabaseManager :Singleton<DatabaseManager>//싱글톤
     public Dictionary<int,string[]> eventInfo;
     public Dictionary<int, Item> ItemsDic;
 
+    public Dictionary<ItemType, List<int>> typeItemDic;
 
     public static bool isFinish= false;//정보 저장이 되었는지
 
@@ -22,6 +23,15 @@ public class DatabaseManager :Singleton<DatabaseManager>//싱글톤
 
     private void Awake()
     {
+        typeItemDic = new Dictionary<ItemType, List<int>>();
+        for(int i=0; i<4; i++)
+        {
+            Debug.Log(((ItemType)i).ToString());
+            typeItemDic.Add((ItemType)i,new List<int>()); 
+
+        }
+        
+
         GetSchedule();
         //GetDialogueDataToDic();
     }
@@ -52,18 +62,23 @@ public class DatabaseManager :Singleton<DatabaseManager>//싱글톤
 
         return dialogues;
     }
-    /*
-    public void GetDialogueDataToDic()
+    public string GetItemEffectString(Item item)
     {
-        DialogueParser parser = GetComponent<DialogueParser>();
-        line = parser.GetLine(csv_FileName);
-        Dialogue[] dialogues = parser.Parse(csv_FileName);
-        for (int i = 0; i < dialogues.Length; i++)
+        string str = "";
+        for (int i = 0; i < 13; i++)
         {
-            dialogDic.Add(i + 1, dialogues[i]);
+            if (i < 2)
+            {
+
+            }
+            else
+            {
+                if (item.effect[i] != 0)
+                    str += DatabaseManager.Instance.attributeNames[i - 2] + " " + item.effect[i] + "  ";
+            }
+
         }
-        isFinish = true;
+        return str;
     }
-    */
 
 }

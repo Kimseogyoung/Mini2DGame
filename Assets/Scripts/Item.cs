@@ -15,6 +15,7 @@ public class Item
     public ItemType type;
     public int[] effect=new int[13];
     public string itemImage;
+    public int price;
 
     //
     public int count=1;
