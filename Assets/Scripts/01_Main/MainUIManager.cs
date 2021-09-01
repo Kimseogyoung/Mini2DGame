@@ -8,6 +8,7 @@ public class MainUIManager : MonoBehaviour
 {
     public ScheduleManager scheduleManager;
     public Inventory inventory;
+    public Phone phone;
 
     public GameObject roomUI;
     public GameObject roomObjects;
@@ -33,11 +34,12 @@ public class MainUIManager : MonoBehaviour
     public TextMeshProUGUI text_dialogContext;
     public Button btn_dialogueNext;
 
+    
     public Button btn_uiClean;
     public Button btn_uiOn;
     public Button btn_makeSchedule;
     public Button btn_inventory;
-
+    public Button btn_phone;
 
     public Button miniNoteObject;
     public GameObject miniNote;
@@ -66,7 +68,7 @@ public class MainUIManager : MonoBehaviour
         btn_miniNoteDel.onClick.AddListener(OnClickMiniNoteDel);
         btn_dialogueNext.onClick.AddListener(OnClickNextDialogueButton);
         btn_inventory.onClick.AddListener(inventory.UpInventory);
-
+        btn_phone.onClick.AddListener(phone.ShowPhonePanel);
         //string[] layer = new string[] { "MainUI","RoomObject" };
         //Camera.main.cullingMask = LayerMask.GetMask(layer);
         //Camera.main.cullingMask = LayerMask.GetMask(layer);
@@ -113,7 +115,6 @@ public class MainUIManager : MonoBehaviour
             case State.None:
                 break;
             case State.Start:
-                Debug.Log("gddi"+ dayinfo.dayStartEventID+" "+GameManager.Instance.day);
                 if (dayinfo.dayStartEventID != 0)
                 {
                     Debug.Log("gi");

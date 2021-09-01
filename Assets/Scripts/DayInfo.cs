@@ -9,4 +9,5 @@ public class DayInfo
     public int dayStartEventID;
     public int dayFinishEventID;
     public int scheduleStartEventID;
+    public int alarmEventID;
 }

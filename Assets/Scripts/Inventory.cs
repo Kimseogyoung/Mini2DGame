@@ -39,13 +39,13 @@ public class Inventory : MonoBehaviour
         
         slots = invenPanel.GetComponentsInChildren<Slot>();
         
-        //추후삭제
-        List<Item> list = new List<Item>(GameManager.Instance.inven["Furniture"].Values);
+        
+        List<Item> list = new List<Item>(GameManager.Instance.inven[ItemType.Furniture].Values);
         for (int i=0; i<list.Count; i++)
         {
             if (list[i].active == true)
             {
-
+                /*//추후삭제
                 int[] arr = new int[11];
                 GameManager.Instance.AddEnergy(list[i].effect[0]);
                 GameManager.Instance.AddIntimacy(list[i].effect[1]);
@@ -53,9 +53,15 @@ public class Inventory : MonoBehaviour
                 for (int j = 0; j < 11; j++)
                     arr[j] = list[i].effect[j + 2];
                 GameManager.Instance.AddAttribute(arr);
+                */
+                //활성화된 가구 보이게 설정
+                furnitures[list[i].id / 100].sprite = Resources.Load<Sprite>(list[i].itemImage);
+                
             }
 
         }
+
+
     }
 
     // Update is called once per frame
@@ -71,7 +77,7 @@ public class Inventory : MonoBehaviour
                 UseItem();
                 break;
             case ItemType.Normal:
-                SetActiveNormalItem(!GameManager.Instance.inven["Normal"][selectedSlot.item.id].active);
+                SetActiveNormalItem(!GameManager.Instance.inven[ItemType.Normal][selectedSlot.item.id].active);
                 break;
             case ItemType.Furniture:
                 ChangeFurniture();
@@ -81,7 +87,7 @@ public class Inventory : MonoBehaviour
     private void SetActiveNormalItem(bool value)
     {
         
-        GameManager.Instance.inven["Normal"][selectedSlot.item.id].active = value;
+        GameManager.Instance.inven[ItemType.Normal][selectedSlot.item.id].active = value;
         int plus = (value == true ? 1 : -1);
         int[] arr = new int[11];
         GameManager.Instance.AddEnergy(plus * selectedSlot.item.effect[0]);
@@ -118,21 +124,21 @@ public class Inventory : MonoBehaviour
     private void ChangeFurniture()
     {
         int itemid = selectedSlot.item.id;
-        if (GameManager.Instance.inven["Furniture"][itemid].active==false)
+        if (GameManager.Instance.inven[ItemType.Furniture][itemid].active==false)
         {         
-            GameManager.Instance.inven["Furniture"][itemid].active = true;
-            for (int i = 0; i < 3; i++)
+            GameManager.Instance.inven[ItemType.Furniture][itemid].active = true;
+            for (int i = 0; i < 4; i++)//한 가구당 종류 4가지
             {
                 if (itemid % 100 != i)
                 {
-                    if (GameManager.Instance.inven["Furniture"].ContainsKey(itemid - (itemid % 100) + i))
+                    if (GameManager.Instance.inven[ItemType.Furniture].ContainsKey(itemid - (itemid % 100) + i))
                     {
-                        GameManager.Instance.inven["Furniture"][itemid - (itemid % 100) + i].active = false;
+                        GameManager.Instance.inven[ItemType.Furniture][itemid - (itemid % 100) + i].active = false;
                     }
                 }
             }
             Debug.Log(itemid / 100);
-            furnitures[itemid / 100].sprite = Resources.Load<Sprite>(GameManager.Instance.inven["Furniture"][itemid].itemImage);
+            furnitures[itemid / 100].sprite = Resources.Load<Sprite>(GameManager.Instance.inven[ItemType.Furniture][itemid].itemImage);
             UpdateItemDetails(selectedSlot);
         }
         
@@ -155,7 +161,7 @@ public class Inventory : MonoBehaviour
                 btnObj_use.SetActive(true);
                 if (item.type != ItemType.Available)
                 {
-                    text_selectedItemUseButton.text = GameManager.Instance.inven[currentSelectedType.ToString()][item.id].active ? "사용중" : "사용";
+                    text_selectedItemUseButton.text = GameManager.Instance.inven[currentSelectedType][item.id].active ? "사용중" : "사용";
                 }
                 else
                 {
@@ -233,13 +239,13 @@ public class Inventory : MonoBehaviour
 
 
         ResetOutLine();
-        List<Item> itemList =new List<Item>(GameManager.Instance.inven[currentSelectedType.ToString()].Values);
+        List<Item> itemList =new List<Item>(GameManager.Instance.inven[currentSelectedType].Values);
         for (int i=0; i<12; i++)
         {
             if (itemList.Count>i)
             {
                 Debug.Log(itemList[i].name);
-                slots[i].AddItem(itemList[i],GameManager.Instance.inven[currentSelectedType.ToString()][itemList[i].id].count);
+                slots[i].AddItem(itemList[i],GameManager.Instance.inven[currentSelectedType][itemList[i].id].count);
             }
             else
             {

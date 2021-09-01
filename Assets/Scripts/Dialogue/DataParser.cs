@@ -50,7 +50,8 @@ public class DataParser : MonoBehaviour
                 }
 
             }
-            newItem.price = int.Parse(row[18]);
+            
+            newItem.price = int.Parse(row[18].Equals("")?"0":row[18]);
             itemDic.Add(int.Parse(row[0]), newItem);
             
             DatabaseManager.Instance.typeItemDic[newItem.type].Add(newItem.id);
@@ -68,7 +69,7 @@ public class DataParser : MonoBehaviour
         for (int i = 1; i < data.Length; i++)
         {
             string[] row = data[i].Split(new char[] { ',' });
-            eventDic.Add(int.Parse(row[0]),new string[]{row[1],row[2]});
+            eventDic.Add(int.Parse(row[0]),new string[] { row[1], row[2], row[3], row[4] });
 
         }
         return eventDic;
@@ -83,7 +84,7 @@ public class DataParser : MonoBehaviour
         {
             string[] row = data[i].Split(new char[] { ',' });
             DayInfo dayInfo = new DayInfo();
-            for(int j=0; j < 4; j++)
+            for(int j=0; j < 5; j++)
             {
                 int tmp = row[j].Equals("") ? 0 : int.Parse(row[j]);
                 switch (j)
@@ -99,6 +100,9 @@ public class DataParser : MonoBehaviour
                         break;
                     case 3:
                         dayInfo.scheduleStartEventID = tmp;
+                        break;
+                    case 4:
+                        dayInfo.alarmEventID = tmp;
                         break;
                 }
             }

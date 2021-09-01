@@ -50,11 +50,11 @@ public class GameManager : Singleton<GameManager>
 
 
 
-    public Dictionary<string, Dictionary<int, Item>> inven = new Dictionary<string, Dictionary<int, Item>>();
+    public Dictionary<ItemType, Dictionary<int, Item>> inven = new Dictionary<ItemType, Dictionary<int, Item>>();
 
     public int[] scheduleCount;
 
-    public Friend[] friends;// 친구
+    //public Friend[] friends;// 친구
     //public Item[] items; //소유한 아이템
     public Achievement[] achievement; //달성한 업적
 
@@ -70,43 +70,49 @@ public class GameManager : Singleton<GameManager>
     void Awake()
     {
 
-        inven.Add("Normal", new Dictionary<int, Item>());
-        inven.Add("Furniture", new Dictionary<int, Item>());
-        inven.Add("Book", new Dictionary<int, Item>());
+        inven.Add(ItemType.Normal, new Dictionary<int, Item>());
+        inven.Add(ItemType.Furniture, new Dictionary<int, Item>());
+        inven.Add(ItemType.Book, new Dictionary<int, Item>());
         
 
         //추후삭제//////////////////////////////////////////////
-        if (!GameManager.Instance.inven["Normal"].ContainsKey(1))
+        if (!GameManager.Instance.inven[ItemType.Normal].ContainsKey(1))
         {
-            GameManager.Instance.inven["Normal"].Add(1, DatabaseManager.Instance.ItemsDic[1]);
-            inven["Normal"][1].count = 3;
+            GameManager.Instance.inven[ItemType.Normal].Add(1, DatabaseManager.Instance.ItemsDic[1]);
+            inven[ItemType.Normal][1].count = 3;
         }
-        if (!GameManager.Instance.inven["Normal"].ContainsKey(4))
+        if (!GameManager.Instance.inven[ItemType.Normal].ContainsKey(4))
         {
 
-            GameManager.Instance.inven["Normal"].Add(4, DatabaseManager.Instance.ItemsDic[4]);
+            GameManager.Instance.inven[ItemType.Normal].Add(4, DatabaseManager.Instance.ItemsDic[4]);
         }
-        if (!GameManager.Instance.inven["Book"].ContainsKey(1000))
+        if (!GameManager.Instance.inven[ItemType.Book].ContainsKey(1000))
         {
 
-            GameManager.Instance.inven["Book"].Add(1000, DatabaseManager.Instance.ItemsDic[1000]);
+            GameManager.Instance.inven[ItemType.Book].Add(1000, DatabaseManager.Instance.ItemsDic[1000]);
         }
-        if (!GameManager.Instance.inven["Furniture"].ContainsKey(200))
+        if (!GameManager.Instance.inven[ItemType.Furniture].ContainsKey(200))
         {
 
-            GameManager.Instance.inven["Furniture"].Add(200, DatabaseManager.Instance.ItemsDic[200]);
-            GameManager.Instance.inven["Furniture"][200].active = true;
+            GameManager.Instance.inven[ItemType.Furniture].Add(200, DatabaseManager.Instance.ItemsDic[200]);
+            GameManager.Instance.inven[ItemType.Furniture][200].active = true;
         }
-        if (!GameManager.Instance.inven["Furniture"].ContainsKey(100))
+        if (!GameManager.Instance.inven[ItemType.Furniture].ContainsKey(300))
         {
 
-            GameManager.Instance.inven["Furniture"].Add(100, DatabaseManager.Instance.ItemsDic[100]);
-            GameManager.Instance.inven["Furniture"][100].active = true;
+            GameManager.Instance.inven[ItemType.Furniture].Add(300, DatabaseManager.Instance.ItemsDic[300]);
+            GameManager.Instance.inven[ItemType.Furniture][300].active = true;
         }
-        if (!GameManager.Instance.inven["Furniture"].ContainsKey(101))
+        if (!GameManager.Instance.inven[ItemType.Furniture].ContainsKey(100))
         {
 
-            GameManager.Instance.inven["Furniture"].Add(101, DatabaseManager.Instance.ItemsDic[101]);
+            GameManager.Instance.inven[ItemType.Furniture].Add(100, DatabaseManager.Instance.ItemsDic[100]);
+            GameManager.Instance.inven[ItemType.Furniture][100].active = true;
+        }
+        if (!GameManager.Instance.inven[ItemType.Furniture].ContainsKey(101))
+        {
+
+            GameManager.Instance.inven[ItemType.Furniture].Add(101, DatabaseManager.Instance.ItemsDic[101]);
         }
     }
 

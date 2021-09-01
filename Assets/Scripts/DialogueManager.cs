@@ -45,6 +45,7 @@ public class DialogueManager : Singleton<DialogueManager>
     public Button touchObject;
     public Button Skip;
 
+
     private Button btn_choice1;
     private Button btn_choice2;
     private TextMeshProUGUI text_choice1;

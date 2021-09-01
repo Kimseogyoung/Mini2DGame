@@ -119,7 +119,7 @@ public class ScheduleManager : MonoBehaviour
             if (selectedSchedule[check] == 5)
             {
                 text_selectSlotGroup.text = (check + 1) + "번 일정 책 고르기";
-                list= new List<Item>(GameManager.Instance.inven["Book"].Values);
+                list= new List<Item>(GameManager.Instance.inven[ItemType.Book].Values);
             }
             else
             {
@@ -201,7 +201,7 @@ public class ScheduleManager : MonoBehaviour
                     text_moneymessage.text = "스케쥴을 수행하기 위한 돈이 부족합니다.";
                     break;
                 }
-                if (selectedSchedule[i] == 5 && GameManager.Instance.inven["Book"].Count <= 0)
+                if (selectedSchedule[i] == 5 && GameManager.Instance.inven[ItemType.Book].Count <= 0)
                 {
                     bookCheck = false;
                     text_moneymessage.text = "읽을 수 있는 책이 없습니다.";

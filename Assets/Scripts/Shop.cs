@@ -18,6 +18,7 @@ public class Shop : MonoBehaviour
 
     public TextMeshProUGUI text_context;
     public TextMeshProUGUI text_shopName;
+    public TextMeshProUGUI text_money;
 
     public Image shopImage;
 
@@ -26,8 +27,7 @@ public class Shop : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {
-        
+    {     
         shopSlots=slotGroup.GetComponentsInChildren<ShopSlot>();
         btn_shopOut.GetComponent<Button>().onClick.AddListener(OnClickShopOut);
         btn_buy.GetComponent<Button>().onClick.AddListener(OnClickBuyButton);
@@ -35,18 +35,31 @@ public class Shop : MonoBehaviour
     }
     void OnClickBuyButton()
     {
-        Debug.Log("buy");
+        Debug.Log("buybutton");
         Item _item = DatabaseManager.Instance.ItemsDic[selectedItemId];
-        if (GameManager.Instance.AddMoney(-_item.price))
+        if (!GameManager.Instance.inven[_item.type].ContainsKey(selectedItemId) || _item.type==ItemType.Available)//보유하지않았거나, 소모품(availavle)일때
         {
-            text_context.text = "결제되었습니다.";
-            GameManager.Instance.inven[_item.type == ItemType.Available ? "Normal" : _item.type.ToString()].Add(_item.id, _item);
+            if (GameManager.Instance.AddMoney(-_item.price))
+            {
+                text_context.text = "결제되었습니다.";
+                GameManager.Instance.inven[_item.type == ItemType.Available ? ItemType.Normal : _item.type].Add(_item.id, _item);
+                UpdateMoneyText();
 
+            }
+            else
+            {
+                text_context.text = "가지고 계신 돈이 부족합니다..";
+            }
         }
-        else
+        else//보유했으면
         {
-            text_context.text = "가지고 계신 돈이 부족합니다..";
+            text_context.text = "이미 보유하신 것 같은데요..? \n"+_item.name+"는 한개만 소지 가능합니다.";
         }
+        
+    }
+    public void UpdateMoneyText()
+    {
+        text_money.text = "통잔잔고 : " + GameManager.Instance.money;
     }
     public void FinishShopping()
     {
@@ -81,11 +94,14 @@ public class Shop : MonoBehaviour
     {
         animator.SetTrigger("ActiveFalse");
         backPanel.SetActive(false);
+        selectedItemId = 0;
+        ResetOutLine();
     }
     public void InitShopping()
     {
         shoppingBackGround.SetActive(true);
-        if(storeItems[0]==null)
+        UpdateMoneyText();
+        if (storeItems[0]==null)
             SetShopItems();
         btn_store[0].onClick.AddListener(delegate { OnClickStoreButton(0); });
         btn_store[1].onClick.AddListener(delegate { OnClickStoreButton(1); });
@@ -94,8 +110,11 @@ public class Shop : MonoBehaviour
     }
     public void OnClickStoreButton(int num)
     {
+        UpdateMoneyText();
+
         backPanel.SetActive(true);
         btn_buy.SetActive(false);
+
         switch (num)
         {
             case 0:

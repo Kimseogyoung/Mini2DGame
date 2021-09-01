@@ -9,5 +9,6 @@ public class Event
     public EventType eventType;
     public int scheduleId;
     public int eventId;
-
+    public string name;
+    public string content;
 }

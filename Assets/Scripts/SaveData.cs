@@ -11,11 +11,6 @@ public class SaveData
 }
 
 
-public class Friend
-{
-    public string name;
-
-}
 
 public class Achievement
 {//업적
