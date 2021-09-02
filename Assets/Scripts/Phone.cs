@@ -17,23 +17,19 @@ public class Phone : MonoBehaviour
 
     public Button btn_phoneOff;
     public Button btn_messagePanelOff;
-    public Animator animator;
+    public Animator animator_phonePanel;
+    public Animator animator_phoneImg;
 
-    private GameObject[] objs_member;
-    private bool isEventActive=false;//이벤트가 준비되면  true ->그리고 true인채로 폰 팝업 열리면 이벤트 발생
-    private string fileName;
-    private string[] lineNum;
+    public  bool isEventActive = false;//이벤트가 준비되면  true ->그리고 true인채로 폰 팝업 열리면 이벤트 발생
+    private FriendSlot[] friendSlot_members;
+    
+    private int currentAlarmEventId;
     // Start is called before the first frame update
     void Start()
     {
         btn_phoneOff.onClick.AddListener(OnClickPhoneOffButton);
 
-        objs_member = new GameObject[memberGroup.transform.childCount];
-        for (int i = 0; i < memberGroup.transform.childCount; i++)
-        {
-            objs_member[i] = memberGroup.transform.GetChild(i).gameObject;
-        }
-       
+        friendSlot_members = memberGroup.transform.GetComponentsInChildren<FriendSlot>();
 
         //여기서 day 알림 체크 
         DayInfo dayinfo = DatabaseManager.Instance.days[GameManager.Instance.day];
@@ -41,28 +37,41 @@ public class Phone : MonoBehaviour
         if (dayinfo.alarmEventID != 0)
         {
             isEventActive = true;
-            fileName = DatabaseManager.Instance.eventInfo[dayinfo.alarmEventID][0];
-            lineNum = DatabaseManager.Instance.eventInfo[dayinfo.alarmEventID][1].Split(new char[] { '-' });
+            animator_phoneImg.SetBool("hasAlarm", isEventActive);
+            currentAlarmEventId = dayinfo.alarmEventID;
+            string str = DatabaseManager.Instance.eventInfo[dayinfo.alarmEventID].content.Replace("<br>", "\n");
+            text_notice.text= str;
             
-            text_notice.text= DatabaseManager.Instance.eventInfo[dayinfo.alarmEventID][3];
 
         }
         //친구 호감도별 쪽지 체크
     }
     void OnClickPhoneOffButton()
     {
-        animator.SetTrigger("ActiveFalse");
+        animator_phonePanel.SetTrigger("ActiveFalse");
         backPanel.SetActive(false);
     }
     public void ShowPhonePanel()
     {
-        animator.SetTrigger("ActiveTrue");
+        SetFriendSlots();
+        animator_phonePanel.SetTrigger("ActiveTrue");
         backPanel.SetActive(true);
         if (isEventActive)
         {
-            DialogueManager.Instance.Canvas.SetActive(true);
+            isEventActive = false;
+            animator_phoneImg.SetBool("hasAlarm", isEventActive);
             DialogueManager.Instance.ShowDialogue(DialogueManager.Instance.gameObject.
-                GetComponent<InteractionEvent>().GetDialogue(fileName, int.Parse(lineNum[0]), int.Parse(lineNum[1])));
+                GetComponent<InteractionEvent>().GetDialogue(currentAlarmEventId));
+        }
+    }
+    public void SetFriendSlots()
+    {
+        //추후 우호도별 정렬
+        Friend[] friends = GameManager.Instance.friends;
+
+        for(int i=0; i<friends.Length; i++)
+        {
+            friendSlot_members[i].SetFriend(i, friends[i]);
         }
     }
     public void SetNoticeText(int eventId)

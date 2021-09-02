@@ -54,11 +54,11 @@ public class GameManager : Singleton<GameManager>
 
     public int[] scheduleCount;
 
-    //public Friend[] friends;// 친구
+    public Friend[] friends;// 친구
     //public Item[] items; //소유한 아이템
-    public Achievement[] achievement; //달성한 업적
+    public Achievement[] achievement; //달성한 업적(이벤트와 다름)
 
-    public Event[] eventList;//게임 내 이벤트 목록
+    public List<int> clearEventList=new List<int>();//게임 내 달성(clear상태)한 이벤트 목록
 
 
 

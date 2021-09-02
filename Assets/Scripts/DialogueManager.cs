@@ -170,8 +170,11 @@ public class DialogueManager : Singleton<DialogueManager>
     }
     public void ShowDialogue(Dialogue[] p_dialogues)
     {
+
         if (p_dialogues != null)
         {
+
+            Canvas.SetActive(true);
             isDialogue = true;
             dialogUI.SetActive(true);
             charactorPanel.SetActive(true);
@@ -183,12 +186,15 @@ public class DialogueManager : Singleton<DialogueManager>
         }
         else
         {
-            Debug.Log("p_dialogues is null");
+            
+            Debug.Log("p_dialogues is null or Already Cleared");
         }
        
     }
     public void ExitDialogue()
     {
+       
+
         isDialogue = false;
         isNext = false;
         isMonolog = false;

@@ -11,7 +11,7 @@ public class DatabaseManager :Singleton<DatabaseManager>//싱글톤
     [SerializeField]
     public DayInfo[] days;
 
-    public Dictionary<int,string[]> eventInfo;
+    public Dictionary<int,Event> eventInfo;
     public Dictionary<int, Item> ItemsDic;
 
     public Dictionary<ItemType, List<int>> typeItemDic;
@@ -43,6 +43,7 @@ public class DatabaseManager :Singleton<DatabaseManager>//싱글톤
         eventInfo = parser.EventInfoParse("이벤트정보");
         days = parser.DayInfoParse("일차정보");
         ItemsDic = parser.ItemParse("아이템 목록");
+        GameManager.Instance.friends = parser.friendsParse("캐릭터");
 
     }
     public Dialogue[] GetDialogue(string _CSVFileName, int startLine, int FinishLine)

@@ -48,8 +48,8 @@ public class MainUIManager : MonoBehaviour
     
     public Button btn_miniNoteDel;
 
-    
 
+    public Animator animatorAlarm;
     public Animator animatorDiary;
     public void Start()
     {
@@ -116,13 +116,9 @@ public class MainUIManager : MonoBehaviour
                 break;
             case State.Start:
                 if (dayinfo.dayStartEventID != 0)
-                {
-                    Debug.Log("gi");
-                    string fileName = DatabaseManager.Instance.eventInfo[dayinfo.dayStartEventID][0];
-                    string[] lineNum = DatabaseManager.Instance.eventInfo[dayinfo.dayStartEventID][1].Split(new char[] { '-' });
-                    DialogueManager.Instance.Canvas.SetActive(true);
+                {             
                     DialogueManager.Instance.ShowDialogue(DialogueManager.Instance.gameObject.
-                        GetComponent<InteractionEvent>().GetDialogue(fileName, int.Parse(lineNum[0]), int.Parse(lineNum[1])));
+                        GetComponent<InteractionEvent>().GetDialogue(dayinfo.dayStartEventID));
                 }
                 GameManager.Instance.state = State.None;
                 break;
@@ -131,11 +127,8 @@ public class MainUIManager : MonoBehaviour
                 if (dayinfo.dayFinishEventID != 0)
                 {
                     Debug.Log("finish State");
-                    string fileName = DatabaseManager.Instance.eventInfo[dayinfo.dayFinishEventID][0];
-                    string[] lineNum = DatabaseManager.Instance.eventInfo[dayinfo.dayFinishEventID][1].Split(new char[] { '-' });
-                    DialogueManager.Instance.Canvas.SetActive(true);
                     DialogueManager.Instance.ShowDialogue(DialogueManager.Instance.gameObject.
-                        GetComponent<InteractionEvent>().GetDialogue(fileName, int.Parse(lineNum[0]), int.Parse(lineNum[1])));
+                        GetComponent<InteractionEvent>().GetDialogue(dayinfo.dayFinishEventID));
                 }
                 ShowResult();
                 break;
@@ -298,7 +291,15 @@ public class MainUIManager : MonoBehaviour
     }
     void OnClickMakeScheduleButton()
     {
-        scheduleManager.InitScheduleSelect();
+        if (phone.isEventActive == false)
+        {
+            scheduleManager.InitScheduleSelect();
+        }
+        else
+        {
+            animatorAlarm.SetTrigger("alarmOn");
+        }
+        
         
     }
 
@@ -318,8 +319,7 @@ public class MainUIManager : MonoBehaviour
             //DialogueManager.Instance.ShowDialogue(dialogue);
             //Camera.main.cullingMask = LayerMask.GetMask(new string[] { "EventUI" });
            
-            DialogueManager.Instance.Canvas.SetActive(true);
-            DialogueManager.Instance.ShowDialogue(DialogueManager.Instance.gameObject.GetComponent<InteractionEvent>().GetDialogue("당근마켓",2,19));
+            DialogueManager.Instance.ShowDialogue(DialogueManager.Instance.gameObject.GetComponent<InteractionEvent>().GetDialogue(1));
 
         }
         if (Input.GetKeyDown(KeyCode.Z))

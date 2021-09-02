@@ -15,6 +15,6 @@ public class Schedule
     public int[] attributeValues;
     public string[] dialogueContext;
     public string[] photo;
-    public Event[] eventList;
+
   
 }

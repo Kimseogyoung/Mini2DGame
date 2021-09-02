@@ -47,8 +47,7 @@ public class Scheduling : MonoBehaviour
             //DialogueManager.Instance.ShowDialogue(dialogue);
             //Camera.main.cullingMask = LayerMask.GetMask(new string[] { "EventUI" });
             StopAllCoroutines();
-            DialogueManager.Instance.Canvas.SetActive(true);
-            DialogueManager.Instance.ShowDialogue(DialogueManager.Instance.gameObject.GetComponent<InteractionEvent>().GetDialogue("당근마켓", 2, 19));
+            DialogueManager.Instance.ShowDialogue(DialogueManager.Instance.gameObject.GetComponent<InteractionEvent>().GetDialogue(1));
 
         }
        

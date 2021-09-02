@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum EventType { GlobalDay, Count, Day, Time}
+public enum EventType { Only, Always}//only- 기록됨/한번만 달성   Always-회차마다 초기화
 public class Event
 {
-    public bool isClear=false;//이벤트를 완료했는지
     public EventType eventType;
-    public int scheduleId;
-    public int eventId;
-    public string name;
+
+    //public int eventId;
+    public string fileName;
+    public string line2line;
+    public string eventName;
     public string content;
 }

@@ -24,6 +24,30 @@ public class DataParser : MonoBehaviour
     }
     */
 
+    public Friend[] friendsParse(string _CSVFileName)//임시용 될수도  쓴다면 처음실행에만 받아오게(저장파일있으면 거기서 받아오게(이걸안씀))
+    {
+        List<Friend> friendList = new List<Friend>();
+
+        TextAsset csvData = Resources.Load<TextAsset>(_CSVFileName);
+        string[] data = csvData.text.Split(new char[] { '\n' });
+
+        for (int i = 1; i < data.Length; i++)
+        {
+           
+            string[] row = data[i].Split(new char[] { ',' });
+            Friend newFriend = new Friend();
+            newFriend.id = int.Parse(row[0]);
+            newFriend.name = row[1];
+            newFriend.nickName = row[2];
+            newFriend.miniName = row[3];
+            newFriend.friendship = int.Parse(row[4]);
+
+            friendList.Add(newFriend);
+
+        }
+        return friendList.ToArray();
+    }
+
     public Dictionary<int, Item> ItemParse(string _CSVFileName)
     {
         Dictionary<int, Item> itemDic = new Dictionary<int, Item>();
@@ -59,17 +83,25 @@ public class DataParser : MonoBehaviour
         }
         return itemDic;
     }
-    public Dictionary<int, string[]> EventInfoParse(string _CSVFileName)
+    public Dictionary<int, Event> EventInfoParse(string _CSVFileName)
     {
-        Dictionary<int, string[]> eventDic = new Dictionary<int, string[]>();
+        Dictionary<int, Event> eventDic = new Dictionary<int, Event>();
         
         TextAsset csvData = Resources.Load<TextAsset>(_CSVFileName);
         string[] data = csvData.text.Split(new char[] { '\n' });
 
         for (int i = 1; i < data.Length; i++)
         {
+            Debug.Log(data.Length);
             string[] row = data[i].Split(new char[] { ',' });
-            eventDic.Add(int.Parse(row[0]),new string[] { row[1], row[2], row[3], row[4] });
+            Debug.Log(row[1]);
+            Event newEvent = new Event();
+            newEvent.eventType = StringToEnum<EventType>(row[1]);
+            newEvent.fileName = row[2];
+            newEvent.line2line = row[3];
+            newEvent.eventName = row[4];
+            newEvent.content = row[5];
+            eventDic.Add(int.Parse(row[0]),newEvent);
 
         }
         return eventDic;
