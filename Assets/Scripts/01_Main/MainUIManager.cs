@@ -133,6 +133,11 @@ public class MainUIManager : MonoBehaviour
                 ShowResult();
                 break;
         }
+        if (GameManager.Instance.state != State.Finish)
+        {
+            phone.CheckNewAlarm();
+        }
+        
     }
 
 

@@ -31,17 +31,21 @@ public class Phone : MonoBehaviour
 
         friendSlot_members = memberGroup.transform.GetComponentsInChildren<FriendSlot>();
 
+        
+    }
+    public void CheckNewAlarm()
+    {
         //여기서 day 알림 체크 
         DayInfo dayinfo = DatabaseManager.Instance.days[GameManager.Instance.day];
         Debug.Log(GameManager.Instance.day + " " + dayinfo.alarmEventID);
-        if (dayinfo.alarmEventID != 0)
+        if (dayinfo.alarmEventID != 0 && isEventActive==false)
         {
             isEventActive = true;
             animator_phoneImg.SetBool("hasAlarm", isEventActive);
             currentAlarmEventId = dayinfo.alarmEventID;
-            string str = DatabaseManager.Instance.eventInfo[dayinfo.alarmEventID].content.Replace("<br>", "\n");
-            text_notice.text= str;
-            
+            string str = DatabaseManager.Instance.eventDic[dayinfo.alarmEventID].content.Replace("<br>", "\n");
+            text_notice.text = str;
+
 
         }
         //친구 호감도별 쪽지 체크
@@ -56,8 +60,14 @@ public class Phone : MonoBehaviour
         SetFriendSlots();
         animator_phonePanel.SetTrigger("ActiveTrue");
         backPanel.SetActive(true);
+        
+
+    }
+    void WhenFinishOpenAnim()
+    {
         if (isEventActive)
         {
+            
             isEventActive = false;
             animator_phoneImg.SetBool("hasAlarm", isEventActive);
             DialogueManager.Instance.ShowDialogue(DialogueManager.Instance.gameObject.
@@ -67,10 +77,12 @@ public class Phone : MonoBehaviour
     public void SetFriendSlots()
     {
         //추후 우호도별 정렬
-        Friend[] friends = GameManager.Instance.friends;
+        Friend[] friends = DatabaseManager.Instance.friends ;
 
         for(int i=0; i<friends.Length; i++)
         {
+
+            friends[i].friendship = GameManager.Instance.friendshipPoints[friends[i].id];
             friendSlot_members[i].SetFriend(i, friends[i]);
         }
     }

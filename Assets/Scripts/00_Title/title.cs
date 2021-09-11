@@ -9,6 +9,8 @@ public class title : MonoBehaviour
     public GameObject nameObject;
     public TMP_InputField nameInput;
     public Button btn_start;
+    public Animator animator;
+
     // Start is called before the first frame update
     private void Awake()
     {
@@ -27,6 +29,7 @@ public class title : MonoBehaviour
 
     void OnClickStartButton()
     {
+
         Debug.Log(nameInput.text.Length + " " + nameInput.text);
         if (nameInput.text.Length <= 5 && nameInput.text.Length > 0)
         {
@@ -34,12 +37,20 @@ public class title : MonoBehaviour
             {
                 if(nameInput.text[i]==' ' )
                 {
+                    nameInput.text = "";
+                    animator.SetTrigger("alarmOn");
                     return;
                 }
             }
             GameManager.Instance.playerName = nameInput.text;
             SceneManager.LoadScene("Scenes/01_Main");
-            GameManager.Instance.state = State.Start;//추후 바꾸기 저장데이터로 
+            GameManager.Instance.state = State.Start;//추후 바꾸기 저장데이터로
+            
+        }
+        else
+        {
+            nameInput.text="";
+            animator.SetTrigger("alarmOn");
         }
         
     }

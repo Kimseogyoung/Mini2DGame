@@ -89,12 +89,7 @@ public class Inventory : MonoBehaviour
         
         GameManager.Instance.inven[ItemType.Normal][selectedSlot.item.id].active = value;
         int plus = (value == true ? 1 : -1);
-        int[] arr = new int[11];
-        GameManager.Instance.AddEnergy(plus * selectedSlot.item.effect[0]);
-        GameManager.Instance.AddIntimacy(plus * selectedSlot.item.effect[1]);
-        for (int i = 0; i < 11; i++)
-                arr[i] = plus * selectedSlot.item.effect[i + 2];
-        GameManager.Instance.AddAttribute(arr);
+        GameManager.Instance.AddAllAttributes(selectedSlot.item.effect,plus);
 
         UpdateItemDetails(selectedSlot);
         
@@ -105,12 +100,7 @@ public class Inventory : MonoBehaviour
     {
         if (selectedSlot.itemCount > 0)
         {
-;           int[] arr = new int[11];
-            GameManager.Instance.AddEnergy(selectedSlot.item.effect[0]);
-            GameManager.Instance.AddIntimacy(selectedSlot.item.effect[1]);
-            for (int i = 0; i < 11; i++)
-                arr[i] = selectedSlot.item.effect[i + 2];
-            GameManager.Instance.AddAttribute(arr);
+            GameManager.Instance.AddAllAttributes(selectedSlot.item.effect);
 
             selectedSlot.SetSlotCount(-1);
             if (selectedSlot.item == null)

@@ -16,8 +16,8 @@ public class InteractionEvent : MonoBehaviour
         {
             GameManager.Instance.clearEventList.Add(eventId);
 
-            string fileName = DatabaseManager.Instance.eventInfo[eventId].fileName;
-            string[] lineNum = DatabaseManager.Instance.eventInfo[eventId].line2line.Split(new char[] { '-' });
+            string fileName = DatabaseManager.Instance.eventDic[eventId].fileName;
+            string[] lineNum = DatabaseManager.Instance.eventDic[eventId].line2line.Split(new char[] { '-' });
             dialogue.dialogues = DatabaseManager.Instance.GetDialogue(fileName, int.Parse(lineNum[0]), int.Parse(lineNum[1]));
         }
         else//이미 클리어되었다면 안 나와야 함

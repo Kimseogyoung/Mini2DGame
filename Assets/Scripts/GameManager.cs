@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+static class Attrs
+{
+    public const int allAttrs=13;
+    public const int attrs = 11;
+}
 public enum State { Title, Start, None, Schedule, Finish, End}
 [System.Serializable]
 public class Egg
@@ -52,14 +57,14 @@ public class GameManager : Singleton<GameManager>
 
     public Dictionary<ItemType, Dictionary<int, Item>> inven = new Dictionary<ItemType, Dictionary<int, Item>>();
 
-    public int[] scheduleCount;
+    public Dictionary<int, int> scheduleCount = new Dictionary<int, int>();//스케쥴 수행 횟수(초기화 x)
 
-    public Friend[] friends;// 친구
+    public int[] friendshipPoints;// 친구우호도
     //public Item[] items; //소유한 아이템
     public Achievement[] achievement; //달성한 업적(이벤트와 다름)
 
     public List<int> clearEventList=new List<int>();//게임 내 달성(clear상태)한 이벤트 목록
-
+   
 
 
 
@@ -69,6 +74,19 @@ public class GameManager : Singleton<GameManager>
 
     void Awake()
     {
+        //추후삭제 -
+        scheduleCount.Add(1, 0);      scheduleCount.Add(2, 0);        scheduleCount.Add(3, 0);       scheduleCount.Add(4, 0);
+        scheduleCount.Add(5, 0);       scheduleCount.Add(6, 0);        scheduleCount.Add(7, 0);       scheduleCount.Add(8, 0);
+      scheduleCount.Add(9, 0); scheduleCount.Add(10, 0);scheduleCount.Add(11, 0);scheduleCount.Add(12, 0);scheduleCount.Add(13, 0);
+        scheduleCount.Add(14, 0);scheduleCount.Add(15, 0);scheduleCount.Add(1000, 0);scheduleCount.Add(1001, 0);scheduleCount.Add(1002, 0); scheduleCount.Add(1003, 0);
+        scheduleCount.Add(1004, 0);
+
+        //
+
+        //추삭
+        friendshipPoints = new int[4];
+        for (int i = 0; i < 4; i++) friendshipPoints[i] = 1;
+
 
         inven.Add(ItemType.Normal, new Dictionary<int, Item>());
         inven.Add(ItemType.Furniture, new Dictionary<int, Item>());
@@ -116,6 +134,15 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    public void AddAllAttributes(int[] p_attribute, int plus = 1)
+    {
+        int[] arr = new int[Attrs.attrs];
+        AddEnergy(plus*p_attribute[0]);
+        AddIntimacy(plus*p_attribute[1]);
+        for (int i = 0; i < Attrs.attrs; i++)
+            arr[i] = plus*p_attribute[i + 2];
+        AddAttribute(arr);
+    }
     public void AddAttribute(int[] p_attribute)
     {
 

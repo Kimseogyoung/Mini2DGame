@@ -11,9 +11,10 @@ public class DatabaseManager :Singleton<DatabaseManager>//싱글톤
     [SerializeField]
     public DayInfo[] days;
 
-    public Dictionary<int,Event> eventInfo;
+    public Dictionary<int,Event> eventDic;
     public Dictionary<int, Item> ItemsDic;
 
+    public Friend[] friends;// 친구
     public Dictionary<ItemType, List<int>> typeItemDic;
 
     public static bool isFinish= false;//정보 저장이 되었는지
@@ -40,10 +41,10 @@ public class DatabaseManager :Singleton<DatabaseManager>//싱글톤
     {
         DataParser parser = GetComponent<DataParser>();
         scheduleDic = parser.ScheduleParse("스케쥴");
-        eventInfo = parser.EventInfoParse("이벤트정보");
+        eventDic = parser.EventInfoParse("이벤트정보");
         days = parser.DayInfoParse("일차정보");
         ItemsDic = parser.ItemParse("아이템 목록");
-        GameManager.Instance.friends = parser.friendsParse("캐릭터");
+        friends = parser.friendsParse("캐릭터");
 
     }
     public Dialogue[] GetDialogue(string _CSVFileName, int startLine, int FinishLine)

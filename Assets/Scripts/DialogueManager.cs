@@ -16,11 +16,14 @@ public class DialogueManager : Singleton<DialogueManager>
     public GameObject charactorPanel;
     public GameObject backGroundPanel;
     public GameObject choicePanel;
-
+    public GameObject putTextPanel;
+    public GameObject wrongPanel;
 
     public TextMeshProUGUI text_name;
     public TextMeshProUGUI text_context;
 
+    public TMP_InputField inputField;
+    public Button btn_inputField;
 
 
     private Image charactorImage;
@@ -50,6 +53,9 @@ public class DialogueManager : Singleton<DialogueManager>
     private Button btn_choice2;
     private TextMeshProUGUI text_choice1;
     private TextMeshProUGUI text_choice2;
+
+    private Image img_inputPanel;
+    public TextMeshProUGUI text_inputPanel;
     private void Start()
     {
         charactorImage = charactorPanel.GetComponent<Image>();
@@ -67,8 +73,11 @@ public class DialogueManager : Singleton<DialogueManager>
         GameObject obj_choice1 = choicePanel.transform.GetChild(0).gameObject;
         GameObject obj_choice2 = choicePanel.transform.GetChild(1).gameObject;
 
+        img_inputPanel = wrongPanel.GetComponent<Image>();
         btn_choice1 = obj_choice1.GetComponent<Button>();
         btn_choice2 = obj_choice2.GetComponent<Button>();
+
+        btn_inputField.onClick.AddListener(OnClickInputFieldBtn);
         
         btn_choice1.GetComponent<Button>().onClick.AddListener(delegate { OnClickedChoicePanel(0); });
         btn_choice2.GetComponent<Button>().onClick.AddListener(delegate { OnClickedChoicePanel(1); });
@@ -87,15 +96,73 @@ public class DialogueManager : Singleton<DialogueManager>
     void OnClickedChoicePanel(int i)
     {
         int nextId = dialogues[lineCount].questions[sentenceCount].GetNextid(i);
-        Debug.Log(dialogues[lineCount].questions[sentenceCount].GetEffect());
+        
         isNext = true;
         lineCount = nextId;
-        sentenceCount = 0;
+        
         choicePanel.SetActive(false);
         ShowNextDialogue();
         
     }
+    void OnClickInputFieldBtn()
+    {
+        
+        if (inputField.text.Length <= 5 && inputField.text.Length > 0)
+        {
+            for (int i = 0; i < inputField.text.Length; i++)
+            {
+                if (inputField.text[i] == ' ')
+                {
+                    inputField.text = "";
+                    StopAllCoroutines();
+                    StartCoroutine(ShowWrongInputPanel());
+                    return;
+                }
+            }
+            isNext = true;
+            sentenceCount = 0;
+            GameManager.Instance.egg.name = inputField.text;
 
+            putTextPanel.SetActive(false);
+            ShowNextDialogue();
+        }
+        else
+        {
+            inputField.text = "";
+            StopAllCoroutines();
+            StartCoroutine(ShowWrongInputPanel());
+        }
+        
+
+    }
+    
+    IEnumerator ShowWrongInputPanel()
+    {
+        wrongPanel.SetActive(true);
+        int a = 1;
+
+        Color color1 = img_inputPanel.color;
+        color1.a =0;
+        img_inputPanel.canvasRenderer.SetAlpha(0);
+        text_inputPanel.canvasRenderer.SetAlpha(0);
+        for (int i=0; i<100; i++)
+        {
+
+            if (i >= 51) a = -1;
+            color1.a += a*1 * 0.02f;
+            img_inputPanel.canvasRenderer.SetAlpha(color1.a);
+            text_inputPanel.canvasRenderer.SetAlpha(color1.a);
+            yield return new WaitForSecondsRealtime(0.01f);
+        }
+        wrongPanel.SetActive(false);
+
+
+    }
+    void ShowPutTextPanel()
+    {
+        putTextPanel.SetActive(true);
+
+    }
     void ShowChoicePanels()
     {
         choicePanel.SetActive(true);
@@ -174,6 +241,7 @@ public class DialogueManager : Singleton<DialogueManager>
         if (p_dialogues != null)
         {
 
+            Time.timeScale = 0;
             Canvas.SetActive(true);
             isDialogue = true;
             dialogUI.SetActive(true);
@@ -193,26 +261,28 @@ public class DialogueManager : Singleton<DialogueManager>
     }
     public void ExitDialogue()
     {
-       
 
-        isDialogue = false;
-        isNext = false;
-        isMonolog = false;
-        isQuestion = false;
+            StopAllCoroutines();
+            Time.timeScale = 1;
+            isDialogue = false;
+            isNext = false;
+            isMonolog = false;
+            isQuestion = false;
 
-        dialogUI.SetActive(false);
-        charactorPanel.SetActive(false);
+            dialogUI.SetActive(false);
+            charactorPanel.SetActive(false);
 
-        prevBackSpriteName = "";
-        prevSpriteName = "";
-        prevLineCount = -1;
-        lineCount = 0;
-        sentenceCount = 0;
-        text_context.text = "";
-        text_name.text = "";
+            prevBackSpriteName = "";
+            prevSpriteName = "";
+            prevLineCount = -1;
+            lineCount = 0;
+            sentenceCount = 0;
+            text_context.text = "";
+            text_name.text = "";
 
-        Canvas.SetActive(false);
-        //Camera.main.cullingMask = LayerMask.GetMask(new string[] { "MainUI", "RoomObject" });
+            Canvas.SetActive(false);
+         
+        
     }
 
     IEnumerator StartDialogueCoroutine()
@@ -223,11 +293,30 @@ public class DialogueManager : Singleton<DialogueManager>
         if(prevLineCount!= lineCount)
         {   //id가 달라질 때
 
-            prevLineCount = lineCount;           
-            text_name.text = dialogues[lineCount].name;//화자 이름 바꾸기
+            prevLineCount = lineCount;
+            text_name.text = dialogues[lineCount].name
+                .Replace("ⓤ", GameManager.Instance.playerName).Replace("ⓜ",GameManager.Instance.egg.name); //화자 이름 바꾸기
 
             isMonolog = dialogues[lineCount].name.Equals("");
             charactorPanel.SetActive(!isMonolog);
+
+            if (dialogues[lineCount].friend != -1)
+            {
+                GameManager.Instance.friendshipPoints[dialogues[lineCount].friend] += dialogues[lineCount].friendshipPoint;
+            }
+            if (dialogues[lineCount].money != 0)
+            {
+                if (!GameManager.Instance.AddMoney(dialogues[lineCount].money))
+                {
+                    GameManager.Instance.money = 0;
+                }
+                
+            }
+            for(int i=0; i<Attrs.allAttrs; i++)
+            {
+                GameManager.Instance.AddAllAttributes(dialogues[lineCount].attrs);
+            }
+
 
 
         }
@@ -256,7 +345,7 @@ public class DialogueManager : Singleton<DialogueManager>
         
 
         string t_ReplaceText = dialogues[lineCount].sentences[sentenceCount];
-        t_ReplaceText = t_ReplaceText.Replace("'", ",");
+        t_ReplaceText = t_ReplaceText.Replace("'", ",").Replace("ⓜ",GameManager.Instance.egg.name).Replace("<br>","\n");
         
 
 
@@ -264,13 +353,21 @@ public class DialogueManager : Singleton<DialogueManager>
         {
 
             string t_letter= t_ReplaceText[i].ToString();
-            if (t_ReplaceText[i] == 'ⓠ') continue;
+            switch (t_ReplaceText[i])
+            {
+                case 'ⓠ':
+                    continue;
+                case 'ⓢ':
+                    continue;
+
+            }
+
 
             if (isMonolog) t_letter = "<color=#686868>" + t_letter + "</color>";
             else t_letter = "<color=#000000>" + t_letter + "</color>";
 
             text_context.text += t_letter;
-            yield return new WaitForSeconds(0.02f);
+            yield return new WaitForSecondsRealtime(0.02f);
         }
 
         if (t_ReplaceText.Length > 0)
@@ -279,8 +376,15 @@ public class DialogueManager : Singleton<DialogueManager>
             {
                 isQuestion = true;
                 isNext = false;
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSecondsRealtime(0.1f);
                 ShowChoicePanels();
+            }
+            else if (t_ReplaceText[0] == 'ⓢ')
+            {
+                
+                isNext = false;
+                yield return new WaitForSecondsRealtime(0.1f);
+                ShowPutTextPanel();
             }
             else
             {

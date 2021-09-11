@@ -20,6 +20,7 @@ public class Scheduling : MonoBehaviour
     public GameObject clockStick;
 
     public Button btn_nextSchedule2;
+    public Animator animator;
 
     private int[] changedAttributes;
 
@@ -56,9 +57,75 @@ public class Scheduling : MonoBehaviour
     {
 
     }
+    void CheckEvent()
+    {
+    
 
+        Schedule schedule = DatabaseManager.Instance.scheduleDic[selectedSchedule[currentSchedule]];
+        List<int> arr = new List<int>(DatabaseManager.Instance.eventDic.Keys);
+        arr.Sort();
+
+        //이벤트 확인하기
+        if (schedule.friend != -1)
+        {
+            for (int i = 0; i < arr.Count; i++)
+            {
+                if (arr[i] >= (schedule.friend+2)*100)
+                    break;
+
+                if (arr[i] >= ((schedule.friend+1) * 100))
+                {
+                    for (; (arr[i] <= ((schedule.friend + 1) * 100) + GameManager.Instance.friendshipPoints[schedule.friend]); i++)
+                    {
+                        if (!GameManager.Instance.clearEventList.Contains(arr[i]))//클리어하지 않은 이벤트 일때
+                        {
+
+                            DialogueManager.Instance.ShowDialogue(DialogueManager.Instance.gameObject.
+                            GetComponent<InteractionEvent>().GetDialogue(arr[i]));
+                            return;
+                        }
+
+                    }
+
+                }
+            }
+
+        }
+
+       
+
+        for (int i=0;i< arr.Count; i++)
+        {
+            if (arr[i] >= (schedule.id + 1) * 100000)
+                break;
+
+            if (arr[i] >= (schedule.id * 100000) )
+            {
+                for(; arr[i] <= (schedule.id * 100000) + GameManager.Instance.scheduleCount[schedule.id]; i++)
+                {
+                    if (!GameManager.Instance.clearEventList.Contains(arr[i]))//클리어하지 않은 이벤트 일때
+                    {
+                        DialogueManager.Instance.ShowDialogue(DialogueManager.Instance.gameObject.
+                        GetComponent<InteractionEvent>().GetDialogue(arr[i]));
+                        return;
+                    }
+                        
+                }
+                
+            }
+        }
+       
+    }
     public void OnClickNextScheduleButton()
     {
+
+        //스케쥴카운트 ++
+
+        if (selectedSchedule[currentSchedule] == 1)//
+        {
+            CheckEvent();
+        }
+
         if (++currentSchedule <= 2)
         {
             if (selectedSchedule[currentSchedule-1] == 1)
@@ -70,14 +137,18 @@ public class Scheduling : MonoBehaviour
         }
         else
         {
-            currentSchedule = 0;
-            ShowScheduleResult();
-            GameManager.Instance.state = State.Finish;
-            GameManager.Instance.changedAttrs = changedAttributes;
-            SceneManager.LoadScene("Scenes/01_Main");
 
+            animator.SetTrigger("finish");
         }
 
+    }
+    void FinishThisScene()
+    {
+        currentSchedule = 0;
+        ShowScheduleResult();
+        GameManager.Instance.state = State.Finish;
+        GameManager.Instance.changedAttrs = changedAttributes;
+        SceneManager.LoadScene("Scenes/01_Main");
     }
     public void InitScheduling()
     {
@@ -245,8 +316,14 @@ public class Scheduling : MonoBehaviour
             shop.InitShopping();
         }
 
-        
+
 
         btn_nextSchedule.SetActive(true);
+        GameManager.Instance.scheduleCount[selectedSchedule[currentSchedule]]++;
+        if (selectedSchedule[currentSchedule] != 1)//
+        {
+            CheckEvent();
+        }
+        
     }
 }

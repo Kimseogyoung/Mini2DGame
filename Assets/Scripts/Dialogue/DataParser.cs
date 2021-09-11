@@ -153,7 +153,10 @@ public class DataParser : MonoBehaviour
         for (int i = 2; i < data.Length; i++)
         {
             string[] row = data[i].Split(new char[] { ',' });
+
+           
             Schedule schedule = new Schedule();
+            schedule.id = int.Parse(row[0]);
             schedule.name = row[1];
             schedule.money = int.Parse(row[2]);
             schedule.energy = int.Parse(row[3]);
@@ -178,7 +181,8 @@ public class DataParser : MonoBehaviour
 
             schedule.dialogueContext= row[16].Split(new char[] { '-' });
             schedule.photo= row[17].Split(new char[] { '-' });
-
+            if (!row[18].Equals(""))
+                schedule.friend = int.Parse(row[18]);
 
             scheduleDic.Add(int.Parse(row[0]),schedule);
 
@@ -213,8 +217,7 @@ public class DataParser : MonoBehaviour
                 {
                     if (row[6].ToString() != "")
                     {
-                        q = new Question(int.Parse(row[5].ToString()), int.Parse(row[6].ToString()),
-                       StringToEnum<AfterEffect>(row[7].ToString()));
+                        q = new Question(int.Parse(row[5].ToString()), int.Parse(row[6].ToString()));
                     }
                     else
                     {
@@ -233,7 +236,21 @@ public class DataParser : MonoBehaviour
                 sentenceList.Add(row[2]);
                 spriteList.Add(row[3]);
                 backSpriteList.Add(row[4]);
-             
+
+                if (!row[7].Equals(""))
+                {
+                    dialogue.friend = int.Parse(row[7]);
+                    dialogue.friendshipPoint = int.Parse(row[8]);
+                }
+                if (!row[9].Equals(""))
+                    dialogue.money = int.Parse(row[9]);
+
+                for(int j=0; j<Attrs.allAttrs; j++)
+                {
+                    if (!row[10 + j].Equals(""))
+                        dialogue.attrs[j] = int.Parse(row[10 + j]);
+                }
+
 
 
                 if (++i < data.Length)

@@ -18,23 +18,28 @@ public class Dialogue
     public string[] backSprites;
 
     public Question[] questions;
+    public int friend=-1;
+    public int friendshipPoint=0;
+    public int money=0;
+    public int[] attrs=new int[Attrs.allAttrs];
 
 
   
 }
 
-public enum AfterEffect { None, EnergyUp, EnergyDown, EggCleanUp, EggCleanDown };
+
+[System.Serializable]
 public class Question
 {
     private int[] choices = new int[2];
-    private AfterEffect effect = AfterEffect.None;
 
-    public Question( int choice1, int choice2, AfterEffect p_effect=AfterEffect.None)
+
+    public Question( int choice1, int choice2)
     {
       
         choices[0] = choice1;
         choices[1] = choice2;
-        effect = p_effect;
+
     }
     public int GetNextid(int p_choice = 0)
     {
@@ -43,10 +48,6 @@ public class Question
     public bool IsJump()
     {
         return (choices[0]!=0 && choices[1] == 0);
-    }
-    public AfterEffect GetEffect()
-    {
-        return effect;
     }
 
 
