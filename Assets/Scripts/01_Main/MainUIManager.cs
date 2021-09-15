@@ -318,6 +318,7 @@ public class MainUIManager : MonoBehaviour
     }
     void Update()
     {
+        UpdateUI();
         if (Input.GetKeyDown(KeyCode.Space))
         {
 
@@ -367,5 +368,6 @@ public class MainUIManager : MonoBehaviour
     }
 
 
-    
+
+
 }

@@ -14,7 +14,7 @@ TagManager:
   - 
   - 
   - MainUI
-  - 
+  - Obj
   - EventUI
   - RoomObject
   - 
@@ -58,4 +58,7 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: ui
+    uniqueID: 2131988409
     locked: 0
