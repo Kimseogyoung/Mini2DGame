@@ -1190,7 +1190,7 @@ Canvas:
   m_GameObject: {fileID: 1018104247}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 1454293945}
   m_PlaneDistance: 1
   m_PixelPerfect: 1
@@ -1724,7 +1724,7 @@ Camera:
   m_GameObject: {fileID: 1454293943}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2

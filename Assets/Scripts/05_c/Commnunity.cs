@@ -9,6 +9,8 @@ using TMPro;
 public class Commnunity : MonoBehaviour
 {
     public TalkManager talkManager;
+    public Battle battle;
+
     public GameObject dialoguePanel;
     public GameObject choicePanel;
     public TextMeshProUGUI text_context;
@@ -37,7 +39,12 @@ public class Commnunity : MonoBehaviour
     void ShowNpcComponent()
     {//각 npc들의 기능 실행(scanObject에 따라서)
         isQusetion = false;
+        ObjectData objData = scanObject.GetComponent<ObjectData>();
         //여기서 scaobj사용
+        if (objData.id == 1000)
+        {
+            //battle.Init();
+        }
 
         Action(scanObject);
     }

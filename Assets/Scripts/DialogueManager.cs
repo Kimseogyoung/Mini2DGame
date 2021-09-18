@@ -58,6 +58,7 @@ public class DialogueManager : Singleton<DialogueManager>
     public TextMeshProUGUI text_inputPanel;
     private void Start()
     {
+
         charactorImage = charactorPanel.GetComponent<Image>();
         backGroundImage = backGroundPanel.GetComponent<Image>();
 
