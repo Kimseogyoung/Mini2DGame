@@ -43,7 +43,7 @@ public class Commnunity : MonoBehaviour
         //여기서 scaobj사용
         if (objData.id == 1000)
         {
-            //battle.Init();
+            battle.Init();
         }
 
         Action(scanObject);
