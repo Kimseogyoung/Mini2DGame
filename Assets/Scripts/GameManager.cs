@@ -52,7 +52,7 @@ public class GameManager : Singleton<GameManager>
     public int intimacy;//유대감
 
     public Egg egg;
-
+    public int[] commuBattleLevels;
 
 
     public Dictionary<ItemType, Dictionary<int, Item>> inven = new Dictionary<ItemType, Dictionary<int, Item>>();
@@ -74,6 +74,7 @@ public class GameManager : Singleton<GameManager>
 
     void Awake()
     {
+       
         //추후삭제 -
         scheduleCount.Add(1, 0);      scheduleCount.Add(2, 0);        scheduleCount.Add(3, 0);       scheduleCount.Add(4, 0);
         scheduleCount.Add(5, 0);       scheduleCount.Add(6, 0);        scheduleCount.Add(7, 0);       scheduleCount.Add(8, 0);
@@ -84,6 +85,7 @@ public class GameManager : Singleton<GameManager>
         //
 
         //추삭
+        commuBattleLevels = new int[4];
         friendshipPoints = new int[4];
         for (int i = 0; i < 4; i++) friendshipPoints[i] = 1;
 

@@ -6,6 +6,8 @@ using TMPro;
 
 public class Battle : MonoBehaviour
 {
+    public Commnunity commnunity;
+
     private Animator animator;
     public GameObject selectPanel;
     public Button[] btns_select;
@@ -15,6 +17,8 @@ public class Battle : MonoBehaviour
 
     public GameObject playerScoreBar;
     public GameObject middleScoreBar;
+    public TextMeshProUGUI text_top;
+    public TextMeshProUGUI text_middle;
     public TextMeshProUGUI text_playerScore;
     public TextMeshProUGUI text_playerName;
     public TextMeshProUGUI text_playerMiniName;
@@ -25,6 +29,8 @@ public class Battle : MonoBehaviour
 
     private int currentPlayerScore=50;
     private int battleType;//0 1 2 3
+    private int battleLevel;
+    private bool isWin;
     private float userPower;
     private float comPower;
     private bool isUserTurn=false;
@@ -45,8 +51,35 @@ public class Battle : MonoBehaviour
         
     }
 
+    void OffPanel()
+    {
+        Debug.Log("call afterBattle");
+        isUserTurn = false;
+        gameObject.SetActive(false);
+        commnunity.AfterBattle(isWin,battleType,battleLevel);
+    }
     void FinishGame()
     {
+        text_middle.alignment = TextAlignmentOptions.Center;
+        RectTransform rect = middleScoreBar.GetComponent<RectTransform>();
+        if (rect.anchoredPosition.x <= 0)
+        {
+            //플레이어 패
+            animator.SetBool("isUserWin", false);
+            text_middle.text = "com 승리";
+            isWin = false;
+
+            
+        }
+        else if (rect.anchoredPosition.x >= 720)
+        {
+
+            //플레이어 승
+            animator.SetBool("isUserWin", true);
+            text_middle.text = "나 승리";
+            isWin = true;
+        }
+        animator.SetBool("Finish", true);
 
     }
 
@@ -61,19 +94,18 @@ public class Battle : MonoBehaviour
 
     IEnumerator MoveEnergybar()
     {
+        Debug.Log("에너지바 이동");
         int randNum = Random.Range(-5, 6);
         float power;
         if (isUserTurn)
         {
-            power = (userPower / 10.0f + randNum)*(720.0f/100.0f);
+            power = (userPower /2.0f/ 10.0f + randNum)*(720.0f/100.0f);
         }
         else
         {
-            power = -(comPower / 10.0f + randNum)* (720.0f / 100.0f);
+            power = -(comPower /2.0f/ 10.0f + randNum)* (720.0f / 100.0f);
         }
     
-        Debug.Log("power" + power+",  playerScore"+currentPlayerScore);
-  
 
         RectTransform rect = middleScoreBar.GetComponent<RectTransform>();
         Vector2 pos = rect.anchoredPosition;
@@ -120,17 +152,26 @@ public class Battle : MonoBehaviour
         if (rect.anchoredPosition.x <= 0 || rect.anchoredPosition.x >=720)
         {
             //finish
+            text_top.text = "대결 종료!";
             Debug.Log("배틀 끝");
+            
             FinishGame();
             return;
         }
         if (isUserTurn)
         {
+            Debug.Log("유저턴");
+            text_middle.text = "내 차례!";
+            text_middle.alignment = TextAlignmentOptions.Left;
+            animator.SetTrigger("userTurn");
             btn_attack.onClick.AddListener(OnClickAttackButton);
             attackObj.SetActive(true);
         }
         else
         {
+            Debug.Log("comturn");
+            text_middle.text = "com 차례!";
+            text_middle.alignment = TextAlignmentOptions.Right;
             animator.SetTrigger("comAttack");
         }
         
@@ -140,9 +181,10 @@ public class Battle : MonoBehaviour
         //난이도 설정후
         //난이도 하 
         comPower = 150;
+        battleLevel = 1;
 
         //난이도 중 플레이어 300
-        comPower = 300;
+        //comPower = 300;
 
         //난이도 상 플레이어 500
         //comPower = 500;
@@ -167,6 +209,7 @@ public class Battle : MonoBehaviour
                 break;
         }
         //시작 애니메이션 실행
+        text_top.text = "대결 시작!";
         animator.SetTrigger("Start");
     }
     void OnClickSelectButtons(int i)
