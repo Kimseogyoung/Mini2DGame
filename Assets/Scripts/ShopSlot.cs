@@ -5,12 +5,20 @@ using UnityEngine.UI;
 
 public class ShopSlot : MonoBehaviour
 {
+    public int slotNum;
     public Shop shop;
     public Image itemImage;
     Item item;
     
     private Outline outline;
 
+    public int GetItemId()
+    {
+        if (item == null)
+            return 0;
+        else 
+            return item.id;
+    }
     public void SetOutLine(bool value)
     {
         outline.enabled = value;
@@ -26,8 +34,22 @@ public class ShopSlot : MonoBehaviour
     public void ItemClick()
     {
         shop.ResetOutLine();
-        shop.ShowItemDetail(item);
+        shop.ShowItemDetail(slotNum);
         SetOutLine(true);
+    }
+    public void SoldOut(bool value)
+    {
+        //흑백 조절
+        if (value)
+        {
+            itemImage.color = new Color(0.5f,0.5f,0.5f);
+
+        }
+        else
+        {
+            itemImage.color = new Color(1,1,1);
+        }
+        
     }
     public void SetItem(Item _item=null)
     {
@@ -45,6 +67,10 @@ public class ShopSlot : MonoBehaviour
         }
            
 
+    }
+    public void SetIndex(int num)
+    {
+        slotNum = num;
     }
     // Start is called before the first frame update
     void Start()

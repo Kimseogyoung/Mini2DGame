@@ -5809,7 +5809,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 684.5, y: -300}
-  m_SizeDelta: {x: 500, y: 50}
+  m_SizeDelta: {x: 600, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &495825902
 Animator:
@@ -6733,7 +6733,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &539364057
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6750,10 +6750,10 @@ RectTransform:
   m_Father: {fileID: 928857523}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 167, y: -290}
+  m_SizeDelta: {x: 76, y: 75}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &547806429
 GameObject:
@@ -6772,7 +6772,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &547806430
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7130,7 +7130,6 @@ MonoBehaviour:
   miniNoteIntimacy: {fileID: 2141708362}
   leftPage: {fileID: 928857522}
   btn_miniNoteDel: {fileID: 1436206633}
-  animatorAlarm: {fileID: 495825902}
   animatorDiary: {fileID: 1219963885}
 --- !u!4 &566699155
 Transform:
@@ -7230,8 +7229,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 33
+  m_fontSizeBase: 33
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -15579,6 +15578,8 @@ MonoBehaviour:
   text_moneymessage: {fileID: 1596524947}
   selectSlotGroup: {fileID: 121742589}
   text_selectSlotGroup: {fileID: 1455656476}
+  alarmAnim: {fileID: 495825902}
+  text_alarm: {fileID: 571461605}
 --- !u!4 &1385136593
 Transform:
   m_ObjectHideFlags: 0

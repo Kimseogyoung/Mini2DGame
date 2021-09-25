@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 
 
@@ -22,6 +23,8 @@ public class Commnunity : MonoBehaviour
     public Button btn_yes;
     public Button btn_no;
 
+    private Animator animator;
+
     private Button btn_nextDialogue;
 
     private int talkIndex=0;
@@ -33,10 +36,12 @@ public class Commnunity : MonoBehaviour
     private Image[] heartObjs;
     private GameObject lastActionObj;
     private int currentTalkId;
-    // Start is called before the first frame update
+    private int[] changedAttributes;
 
     void Start()
     {
+        animator = GetComponent<Animator>();
+        changedAttributes = new int[11];
         btn_nextDialogue = dialoguePanel.GetComponent<Button>();
         btn_nextDialogue.onClick.AddListener(delegate { Action(scanObject); });
 
@@ -73,19 +78,34 @@ public class Commnunity : MonoBehaviour
 
         isQusetion = false;
         ObjectData objData = scanObject.GetComponent<ObjectData>();
-        
+        Action(scanObject);
 
         //여기서 scaobj사용
         if (objData.id == 2000)
         {
-
-            battlePanel.SetActive(true);
-            battleSelectPanel.SetActive(true);
+            if (heart+objData.activityPoint<0)
+            {
+                Action(lastActionObj, 2000 + 5);
+            }
+            else
+            {
+                battlePanel.SetActive(true);
+                battleSelectPanel.SetActive(true);
+            }
+            
 
         }
-        else if (objData.id == 1000) { 
+        else if (objData.id == 1000) {
+            animator.SetTrigger("finish");
         }
-        Action(scanObject);
+        
+    }
+    void FinishThisScene()
+    {
+        Debug.Log("Community::FinishThisScene in");
+        GameManager.Instance.state = State.Finish;
+        GameManager.Instance.changedAttrs = changedAttributes;
+        SceneManager.LoadScene("Scenes/01_Main");
     }
     public void Action(GameObject _scanObject,int sp_id=0)
     {

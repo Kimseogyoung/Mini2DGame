@@ -21,6 +21,8 @@ public class ScheduleManager : MonoBehaviour
 
     public GameObject selectSlotGroup;
     public TextMeshProUGUI text_selectSlotGroup;
+    public Animator alarmAnim;
+    public TextMeshProUGUI text_alarm;
 
 
     //
@@ -36,7 +38,7 @@ public class ScheduleManager : MonoBehaviour
     private Button[] btn_deleteSchedule;
 
     private ScheduleSlot[] scheduleSlots;
-    
+   
 
     //scheduling part
 
@@ -103,31 +105,32 @@ public class ScheduleManager : MonoBehaviour
             selectedSchedule[check] = id;
             Debug.Log(check + "id"+selectedSchedule[check]);
         }
-        if (++check == 3)
+        
+        if (++check == 3 || selectedSchedule[check] == 15)
         {
+            Debug.Log("ScheduleManager::ShowSelectBook check"+check);
             GameManager.Instance.selectedSchedule = selectedSchedule;
             schedulePanel.SetActive(false);
             scheduleDialogueObject.SetActive(false);
-            SceneManager.LoadScene("Scenes/02_Schedule");
+
+            GameManager.Instance.state = State.Schedule;
+            if (check == 3)
+                SceneManager.LoadScene("Scenes/02_Schedule");        
+            else
+                SceneManager.LoadScene("Scenes/05_Community");
             return;
         }
 
-        
-        if (selectedSchedule[check] == 5 || selectedSchedule[check] == 15)
+
+
+        if (selectedSchedule[check] == 5)
         {
             List<Item> list=new List<Item>();
-            if (selectedSchedule[check] == 5)
-            {
-                text_selectSlotGroup.text = (check + 1) + "번 일정 책 고르기";
-                list= new List<Item>(GameManager.Instance.inven[ItemType.Book].Values);
-            }
-            else
-            {
-                text_selectSlotGroup.text = (check + 1) + "번 일정 연락할 친구 선택하기";
-                //list= new List<Item>(GameManager.Instance.inven["Book"].Values);
-            }
-            
-                selectSlotGroup.SetActive(true);
+
+            text_selectSlotGroup.text = (check + 1) + "번 일정 책 고르기";
+            list= new List<Item>(GameManager.Instance.inven[ItemType.Book].Values);
+       
+            selectSlotGroup.SetActive(true);
                 
                 if (selectedSchedule[check] == 5)
                 {
@@ -226,25 +229,67 @@ public class ScheduleManager : MonoBehaviour
     }
     public void OnClickDeleteScheduleButton(int btnnum)
     {
-        selectedSchedule[btnnum] = -1;
-        text_selectedScheduleName[btnnum].text = "";
-        selectedScheduleObject[btnnum].SetActive(false);
+        if (selectedSchedule[btnnum] == 15)
+        {
+            for(int i=0; i < 3; i++)
+            {
+                selectedSchedule[i] = -1;
+                text_selectedScheduleName[i].text = "";
+                selectedScheduleObject[i].SetActive(false);
+            }
+        }
+        else
+        {
+            selectedSchedule[btnnum] = -1;
+            text_selectedScheduleName[btnnum].text = "";
+            selectedScheduleObject[btnnum].SetActive(false);
+        }
+        
         CheckSchedule();
+    }
+
+    public void PlayAlarmAnim(string text)
+    {
+        text_alarm.text = text;
+        alarmAnim.SetTrigger("alarmOn");
     }
     public void OnClickScheduleSelectButton(int btnnum)
     {
-        
-        for(int i=0; i < 3; i++)
-        {
-            if (selectedSchedule[i] == -1)
+        if(btnnum + (4 * currentPage) == 15)
+        {//커뮤니티스케쥴일때
+            PlayAlarmAnim("해당 스케쥴은 하루를 전부 사용합니다.");
+            
+            int count = 0;
+            for(int i=0; i < 3; i++)
             {
-                selectedSchedule[i] = btnnum + (4 * currentPage);
-
-                text_selectedScheduleName[i].text = DatabaseManager.Instance.scheduleDic[selectedSchedule[i]].name;
-                selectedScheduleObject[i].SetActive(true);
-                break;
+                if (selectedSchedule[i] == -1)
+                    count++;
+            }
+            if (count == 3)
+            {
+                for(int j=0; j < 3; j++)
+                {
+                    selectedSchedule[j] = 15;
+                    text_selectedScheduleName[j].text = DatabaseManager.Instance.scheduleDic[selectedSchedule[j]].name;
+                    selectedScheduleObject[j].SetActive(true);
+                }
             }
         }
+        else
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (selectedSchedule[i] == -1)
+                {
+                    selectedSchedule[i] = btnnum + (4 * currentPage);
+
+                    text_selectedScheduleName[i].text = DatabaseManager.Instance.scheduleDic[selectedSchedule[i]].name;
+                    selectedScheduleObject[i].SetActive(true);
+                    break;
+                }
+            }
+        }
+        
         CheckSchedule();
 
 

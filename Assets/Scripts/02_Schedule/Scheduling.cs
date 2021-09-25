@@ -26,6 +26,7 @@ public class Scheduling : MonoBehaviour
 
     private int currentSchedule;//현재 진행되고있는 스케쥴
     private int[] selectedSchedule;//선택된 스케쥴의 idx저장
+    private bool isIntimacyOut = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -172,11 +173,36 @@ public class Scheduling : MonoBehaviour
             Vector3 vec = new Vector3(0, 0, -(float)90 / 100);
             clockStick.transform.Rotate(vec);
 
-
-            rectTranEnergy.sizeDelta = new Vector2(Mathf.Min(400, rectTranEnergy.sizeDelta.x + 400 * ((float)DatabaseManager.Instance.scheduleDic[selectedSchedule[currentSchedule]].energy / 10000)),
+            Vector2 energy= new Vector2(Mathf.Min(400, rectTranEnergy.sizeDelta.x + 400 * ((float)DatabaseManager.Instance.scheduleDic[selectedSchedule[currentSchedule]].energy / 10000)),
                 rectTranEnergy.sizeDelta.y);
-            rectTranIntimacy.sizeDelta = new Vector2(Mathf.Min(400, rectTranIntimacy.sizeDelta.x + 400 * ((float)DatabaseManager.Instance.scheduleDic[selectedSchedule[currentSchedule]].intimacy / 10000)),
+            if (energy.x<= 0)
+            {
+                animator.SetTrigger("energyOut");
+                rectTranEnergy.sizeDelta = new Vector2(0, rectTranEnergy.sizeDelta.y);
+                StopAllCoroutines();
+            }
+            else
+            {
+                rectTranEnergy.sizeDelta = energy;
+            }
+
+            Vector2 intimacy = new Vector2(Mathf.Min(400, rectTranIntimacy.sizeDelta.x + 400 * ((float)DatabaseManager.Instance.scheduleDic[selectedSchedule[currentSchedule]].intimacy / 10000)),
                 rectTranIntimacy.sizeDelta.y);
+            if (intimacy.x <= 0 )
+            {
+                if (isIntimacyOut == false)
+                {
+                    isIntimacyOut = true;
+                    animator.SetTrigger("intimacyOut");
+                }
+
+                rectTranIntimacy.sizeDelta = new Vector2(0, rectTranIntimacy.sizeDelta.y);
+            }
+            else
+            {
+                isIntimacyOut = false;
+                rectTranIntimacy.sizeDelta = intimacy;
+            }
 
 
             yield return new WaitForSeconds(0.1f);
@@ -258,64 +284,70 @@ public class Scheduling : MonoBehaviour
                 text_currentStateContext.text += "에너지가 바닥났습니다..\n";
             }
 
-            if (GameManager.Instance.AddIntimacy(schedule.intimacy))
+            GameManager.Instance.AddIntimacy(schedule.intimacy);
+
+            if (schedule.intimacy > 0)
             {
-                if (schedule.intimacy > 0)
-                {
-                    yield return new WaitForSeconds(0.5f);
-                    text_currentStateContext.text += "유대감이 " + schedule.intimacy + " 만큼 증가했습니다.\n";
-                }
-                else if (schedule.intimacy < 0)
+                yield return new WaitForSeconds(0.5f);
+                text_currentStateContext.text += "유대감이 " + schedule.intimacy + " 만큼 증가했습니다.\n";
+            }
+            else if (schedule.intimacy < 0)
                 {
                     yield return new WaitForSeconds(0.5f);
                     text_currentStateContext.text += "유대감이 " + schedule.intimacy + " 만큼 감소했습니다.\n";
                 }
 
-                bool changed = false;
-                for (int j = 0; j < 11; j++)
+            bool changed = false;
+            for (int j = 0; j < 11; j++)
+            {
+                if (schedule.attributeValues[j] != 0)
+                {
+                    changed = true;
+                    break;
+                }
+            }
+            yield return new WaitForSeconds(0.5f);
+
+            string str2 = "";
+            if (changed)
+            {
+                if (isIntimacyOut)                    {
+                    for (int i = 0; i < Attrs.attrs; i++)
+                    {
+                        if (schedule.attributeValues[i] > 0)
+                        {
+                            schedule.attributeValues[i] = -schedule.attributeValues[i];
+                        }
+                    }
+                }
+
+                GameManager.Instance.AddAttribute(schedule.attributeValues);
+
+                str2 = "미니의 특성이 변화했습니다!\n";
+
+                for (int j = 0; j < Attrs.attrs; j++)
                 {
                     if (schedule.attributeValues[j] != 0)
                     {
-                        changed = true;
-                        break;
+                        changedAttributes[j] += schedule.attributeValues[j];
+                        str2 += DatabaseManager.Instance.attributeNames[j] + " " + schedule.attributeValues[j] + " ";
                     }
                 }
-                yield return new WaitForSeconds(0.5f);
-                string str2 = "";
-                if (changed)
-                {
-                    GameManager.Instance.AddAttribute(schedule.attributeValues);
 
-                    str2 = "미니의 특성이 변화했습니다!\n";
-
-                    for (int j = 0; j < 11; j++)
-                    {
-                        if (schedule.attributeValues[j] != 0)
-                        {
-                            changedAttributes[j] += schedule.attributeValues[j];
-                            str2 += DatabaseManager.Instance.attributeNames[j] + " " + schedule.attributeValues[j] + " ";
-                        }
-                    }
-
-                }
-                else
-                {
-                    str2 = "미니가 학습한 특성이 없습니다.\n";
-                }
-                yield return new WaitForSeconds(0.2f);
-                text_currentStateContext.text += str2;
             }
             else
             {
-                text_currentStateContext.text += "미니와 사이가 나빠져 미니가 아무것도 학습하지 않았습니다.\n";
+                str2 = "미니가 학습한 특성이 없습니다.\n";
             }
+            yield return new WaitForSeconds(0.2f);
+            text_currentStateContext.text += str2;
+
         }
         else
         {
             GameManager.Instance.AddEnergy(schedule.energy);
             shop.InitShopping();
         }
-
 
 
         btn_nextSchedule.SetActive(true);
@@ -327,3 +359,4 @@ public class Scheduling : MonoBehaviour
         
     }
 }
+

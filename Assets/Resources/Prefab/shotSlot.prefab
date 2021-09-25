@@ -89,6 +89,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56923eec00cfbd54d9d13055080feb15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slotNum: 0
   shop: {fileID: 0}
   itemImage: {fileID: 4434286560296235801}
 --- !u!114 &4871412620191781486

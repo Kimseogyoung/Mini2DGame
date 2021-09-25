@@ -49,7 +49,6 @@ public class MainUIManager : MonoBehaviour
     public Button btn_miniNoteDel;
 
 
-    public Animator animatorAlarm;
     public Animator animatorDiary;
     public void Start()
     {
@@ -82,6 +81,9 @@ public class MainUIManager : MonoBehaviour
     {
         RectTransform rectInti= miniNoteIntimacy.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject.GetComponent<RectTransform>();
         rectInti.sizeDelta = new Vector2( 180 * ((float)GameManager.Instance.intimacy / 100), rectInti.sizeDelta.y);
+
+        TextMeshProUGUI IntiText = miniNoteIntimacy.transform.GetChild(0).gameObject.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>();
+        IntiText.text = GameManager.Instance.intimacy.ToString();
 
         for (int i=0; i<11; i++)
         {
@@ -302,7 +304,7 @@ public class MainUIManager : MonoBehaviour
         }
         else
         {
-            animatorAlarm.SetTrigger("alarmOn");
+            scheduleManager.PlayAlarmAnim("읽지않은 알림이 있습니다.");
         }
         
         

@@ -24,6 +24,7 @@ public class TalkManager : MonoBehaviour
         talkData.Add(2002, new string[] { "날 이기다니, 대단한데?:1", "이번엔 난이도 중이었어\n다음엔 정말 쉽게 이길 수 없을거야.:1", "승리 보상으로 이걸 줄게.:1" });
         talkData.Add(2003, new string[] { "이렇게 했는데도 진다고?:1", "이제 이 부문에서는 대결이 안되네:1", "대단해! 보상으로 이걸 줄게.:1" });
         talkData.Add(2004, new string[] { "아쉽지만 내가 이겼어:1", "다음에 또 상대해줄게.:1" });
+        talkData.Add(2005, new string[] { "행동력이 부족하잖아,\n행동력 3포인트가 필요해.:1", "다음에 와.:1" });
         talkData.Add(1000, new string[] { "ⓕ돌아갈까?:0" });//:뒤는 portraitIndex
         
         talkData.Add(100, new string[] { "이건 알이다." });
