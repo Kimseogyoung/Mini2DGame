@@ -53,12 +53,12 @@ TagManager:
   - name: Main
     uniqueID: 1166677335
     locked: 0
-  - name: Event
-    uniqueID: 1512441057
-    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
   - name: ui
     uniqueID: 2131988409
+    locked: 0
+  - name: Event
+    uniqueID: 1512441057
     locked: 0

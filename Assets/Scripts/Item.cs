@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum ItemType { Available, Normal, Book, Furniture };
+public enum ItemType { Normal,Clothes, Book, Furniture };
 
 public class Item 
 {

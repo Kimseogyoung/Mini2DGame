@@ -6,6 +6,10 @@ public class CameraResolution : MonoBehaviour
 {
     void Start()
     {
+        SetResolution();
+    }
+    public void SetResolution()
+    {
         Camera camera = GetComponent<Camera>();
         Rect rect = camera.rect;
         float scaleheight = ((float)Screen.width / Screen.height) / ((float)9 / 16); // (가로 / 세로)

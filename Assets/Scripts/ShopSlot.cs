@@ -58,6 +58,7 @@ public class ShopSlot : MonoBehaviour
         if (item != null)
         {
             itemImage.sprite = Resources.Load<Sprite>(item.itemImage);
+            itemImage.preserveAspect = true;
             SetColor(255);
         }
         else

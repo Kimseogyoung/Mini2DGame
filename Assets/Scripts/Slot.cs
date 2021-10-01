@@ -54,7 +54,7 @@ public class Slot : MonoBehaviour
         itemImage.sprite = Resources.Load<Sprite>(item.itemImage);
            
 
-        if (item.type == ItemType.Available)
+        if (item.type == ItemType.Normal)
         {
             go_CountImage.SetActive(true);
             text_count.text = itemCount.ToString();
@@ -74,10 +74,10 @@ public class Slot : MonoBehaviour
 
         itemCount += _count;
         text_count.text = itemCount.ToString();
-        GameManager.Instance.inven[item.type == ItemType.Available ? ItemType.Normal : item.type][item.id].count = itemCount;
+        GameManager.Instance.inven[item.type == ItemType.Normal ? ItemType.Normal : item.type][item.id].count = itemCount;
         if (itemCount <= 0)
         {
-            GameManager.Instance.inven[item.type == ItemType.Available ? ItemType.Normal : item.type].Remove(item.id);
+            GameManager.Instance.inven[item.type == ItemType.Normal ? ItemType.Normal : item.type].Remove(item.id);
             ClearSlot();
         }
     }

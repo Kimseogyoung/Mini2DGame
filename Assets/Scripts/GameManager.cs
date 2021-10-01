@@ -52,8 +52,9 @@ public class GameManager : Singleton<GameManager>
     public int intimacy;//유대감
 
     public Egg egg;
-    public int[] commuBattleLevels;
-
+    public int[] plusAttrs;
+    public int[] commuBattleLevels;//커뮤니티 배틀 레벨
+    public int clothesId;
 
     public Dictionary<ItemType, Dictionary<int, Item>> inven = new Dictionary<ItemType, Dictionary<int, Item>>();
 
@@ -74,7 +75,7 @@ public class GameManager : Singleton<GameManager>
 
     void Awake()
     {
-       
+        clothesId = 0;
         //추후삭제 -
         scheduleCount.Add(1, 0);      scheduleCount.Add(2, 0);        scheduleCount.Add(3, 0);       scheduleCount.Add(4, 0);
         scheduleCount.Add(5, 0);       scheduleCount.Add(6, 0);        scheduleCount.Add(7, 0);       scheduleCount.Add(8, 0);
@@ -91,20 +92,25 @@ public class GameManager : Singleton<GameManager>
 
 
         inven.Add(ItemType.Normal, new Dictionary<int, Item>());
+        inven.Add(ItemType.Clothes, new Dictionary<int, Item>());
         inven.Add(ItemType.Furniture, new Dictionary<int, Item>());
         inven.Add(ItemType.Book, new Dictionary<int, Item>());
         
 
         //추후삭제//////////////////////////////////////////////
-        if (!GameManager.Instance.inven[ItemType.Normal].ContainsKey(1))
+        if (!GameManager.Instance.inven[ItemType.Normal].ContainsKey(20))
         {
-            GameManager.Instance.inven[ItemType.Normal].Add(1, DatabaseManager.Instance.ItemsDic[1]);
-            inven[ItemType.Normal][1].count = 3;
+            GameManager.Instance.inven[ItemType.Normal].Add(20, DatabaseManager.Instance.ItemsDic[20]);
+            inven[ItemType.Normal][20].count = 3;
         }
-        if (!GameManager.Instance.inven[ItemType.Normal].ContainsKey(4))
+        if (!GameManager.Instance.inven[ItemType.Clothes].ContainsKey(1))
+        {
+            GameManager.Instance.inven[ItemType.Clothes].Add(1, DatabaseManager.Instance.ItemsDic[1]);
+        }
+        if (!GameManager.Instance.inven[ItemType.Normal].ContainsKey(21))
         {
 
-            GameManager.Instance.inven[ItemType.Normal].Add(4, DatabaseManager.Instance.ItemsDic[4]);
+            GameManager.Instance.inven[ItemType.Normal].Add(21, DatabaseManager.Instance.ItemsDic[21]);
         }
         if (!GameManager.Instance.inven[ItemType.Book].ContainsKey(1000))
         {
@@ -136,23 +142,45 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    public void AddAllAttributes(int[] p_attribute, int plus = 1)
+    public int[] AllAttrsToAttrs(int[] p_attribute)
     {
         int[] arr = new int[Attrs.attrs];
-        AddEnergy(plus*p_attribute[0]);
-        AddIntimacy(plus*p_attribute[1]);
         for (int i = 0; i < Attrs.attrs; i++)
-            arr[i] = plus*p_attribute[i + 2];
-        AddAttribute(arr);
+        {
+            arr[i] = p_attribute[i + (Attrs.allAttrs-Attrs.attrs)];
+        }
+        return arr; 
     }
-    public void AddAttribute(int[] p_attribute)
+    public void AddPlusAttribute(int[] p_attribute, int sign = 1)
+    {
+        
+        if (p_attribute.Length == plusAttrs.Length)
+        {
+            for (int i = 0; i < plusAttrs.Length; i++)
+            {
+                plusAttrs[i] += p_attribute[i] * sign;
+            }
+        }
+
+    }
+    public void AddAllAttributes(int[] p_attribute, int sign = 1)
+    {
+        int[] arr = new int[Attrs.attrs];
+        AddEnergy(sign*p_attribute[0]);
+        AddIntimacy(sign*p_attribute[1]);
+        for (int i = 0; i < Attrs.attrs; i++)
+            arr[i] = p_attribute[i + 2];
+        AddAttribute(arr,sign);
+    }
+
+    public void AddAttribute(int[] p_attribute, int sign = 1)
     {
 
         if (p_attribute.Length == egg.attributeValues.Length)
         {
             for (int i = 0; i < egg.attributeValues.Length; i++)
             {
-                egg.attributeValues[i] += p_attribute[i];
+                egg.attributeValues[i] += p_attribute[i] * sign;
             }
         }
        

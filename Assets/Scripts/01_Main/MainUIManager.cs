@@ -8,6 +8,7 @@ public class MainUIManager : MonoBehaviour
 {
     public ScheduleManager scheduleManager;
     public Inventory inventory;
+    public Inventory closet;
     public Phone phone;
 
     public GameObject roomUI;
@@ -40,7 +41,7 @@ public class MainUIManager : MonoBehaviour
     public Button btn_makeSchedule;
     public Button btn_inventory;
     public Button btn_phone;
-
+    public Button btn_closet;
     public Button miniNoteObject;
     public GameObject miniNote;
     public GameObject miniNoteIntimacy;
@@ -68,6 +69,7 @@ public class MainUIManager : MonoBehaviour
         btn_dialogueNext.onClick.AddListener(OnClickNextDialogueButton);
         btn_inventory.onClick.AddListener(inventory.UpInventory);
         btn_phone.onClick.AddListener(phone.ShowPhonePanel);
+        btn_closet.onClick.AddListener(closet.UpInventory);
         //string[] layer = new string[] { "MainUI","RoomObject" };
         //Camera.main.cullingMask = LayerMask.GetMask(layer);
         //Camera.main.cullingMask = LayerMask.GetMask(layer);
@@ -87,12 +89,13 @@ public class MainUIManager : MonoBehaviour
 
         for (int i=0; i<11; i++)
         {
+            int value = GameManager.Instance.egg.attributeValues[i] + GameManager.Instance.plusAttrs[i];
             GameObject obj = leftPage.transform.GetChild(i).gameObject.transform.GetChild(0).gameObject;
             RectTransform rectTranAttr = obj.transform.GetChild(0).gameObject.GetComponent<RectTransform>();
-            rectTranAttr.sizeDelta = new Vector2( rectTranAttr.sizeDelta.x, 55 * ((float)GameManager.Instance.egg.attributeValues[i] / 500));
+            rectTranAttr.sizeDelta = new Vector2( rectTranAttr.sizeDelta.x, 55 * ((float)value / 500));
 
             TextMeshProUGUI objValueText = obj.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>();
-            objValueText.text = GameManager.Instance.egg.attributeValues[i].ToString();
+            objValueText.text = value.ToString();
 
             TextMeshProUGUI objNameText = leftPage.transform.GetChild(i).gameObject.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
             if (i >= 8 && !GameManager.Instance.egg.isOpenhidden[i % 8])

@@ -46,12 +46,12 @@ public class Shop : MonoBehaviour
         if (shopSlots[slotIdx].GetItemId()!=0)
             _item = DatabaseManager.Instance.ItemsDic[shopSlots[slotIdx].GetItemId()];
 
-        if (!GameManager.Instance.inven[_item.type].ContainsKey(shopSlots[slotIdx].GetItemId()) || _item.type==ItemType.Available)//보유하지않았거나, 소모품(availavle)일때
+        if (!GameManager.Instance.inven[_item.type].ContainsKey(shopSlots[slotIdx].GetItemId()) || _item.type==ItemType.Normal)//보유하지않았거나, 소모품(availavle)일때
         {
             if (GameManager.Instance.AddMoney(-_item.price))
             {
                 text_context.text = "결제되었습니다.";
-                GameManager.Instance.inven[_item.type == ItemType.Available ? ItemType.Normal : _item.type].Add(_item.id, _item);
+                GameManager.Instance.inven[_item.type == ItemType.Normal ? ItemType.Normal : _item.type].Add(_item.id, _item);
                 UpdateMoneyText();
                 storeItemSoldOut[shopIdx][slotIdx] = true;
                 shopSlots[slotIdx].SoldOut(true);

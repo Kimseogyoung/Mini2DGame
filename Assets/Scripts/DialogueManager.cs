@@ -9,7 +9,7 @@ using TMPro;
 public class DialogueManager : Singleton<DialogueManager>
 {
     [HideInInspector]
-    public GameObject Canvas;
+    public GameObject canvasObj;
 
 
     public GameObject dialogUI;
@@ -58,7 +58,7 @@ public class DialogueManager : Singleton<DialogueManager>
     public TextMeshProUGUI text_inputPanel;
     private void Start()
     {
-
+        
         charactorImage = charactorPanel.GetComponent<Image>();
         backGroundImage = backGroundPanel.GetComponent<Image>();
 
@@ -70,7 +70,7 @@ public class DialogueManager : Singleton<DialogueManager>
         text_context.text = "";
         touchObject.onClick.AddListener(ShowNextDialogue);
 
-        Canvas = gameObject.transform.GetChild(0).gameObject;
+        canvasObj = gameObject.transform.GetChild(0).gameObject;
         GameObject obj_choice1 = choicePanel.transform.GetChild(0).gameObject;
         GameObject obj_choice2 = choicePanel.transform.GetChild(1).gameObject;
 
@@ -121,7 +121,7 @@ public class DialogueManager : Singleton<DialogueManager>
                 }
             }
             isNext = true;
-            sentenceCount = 0;
+            
             GameManager.Instance.egg.name = inputField.text;
 
             putTextPanel.SetActive(false);
@@ -243,10 +243,17 @@ public class DialogueManager : Singleton<DialogueManager>
         {
 
             Time.timeScale = 0;
-            Canvas.SetActive(true);
+            canvasObj.SetActive(true);
             isDialogue = true;
             dialogUI.SetActive(true);
             charactorPanel.SetActive(true);
+            Canvas canvas = canvasObj.GetComponent<Canvas>();
+            if (canvas.worldCamera == null)
+            {
+                canvas.worldCamera = Camera.main;
+                canvas.worldCamera.GetComponent<CameraResolution>().SetResolution();
+                canvas.sortingLayerName = "Event";
+            }
 
             //choicePanel.SetActive(false);
 
@@ -281,7 +288,7 @@ public class DialogueManager : Singleton<DialogueManager>
             text_context.text = "";
             text_name.text = "";
 
-            Canvas.SetActive(false);
+            canvasObj.SetActive(false);
          
         
     }
