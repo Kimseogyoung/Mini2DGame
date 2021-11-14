@@ -27,6 +27,8 @@ public class Scheduling : MonoBehaviour
     private int currentSchedule;//현재 진행되고있는 스케쥴
     private int[] selectedSchedule;//선택된 스케쥴의 idx저장
     private bool isIntimacyOut = false;
+
+    private float sc_time = 100;
     // Start is called before the first frame update
     void Start()
     {
@@ -166,11 +168,11 @@ public class Scheduling : MonoBehaviour
         RectTransform rectTranIntimacy = intimacyBar.GetComponent<RectTransform>();
         rectTranIntimacy.sizeDelta = new Vector2(400 * ((float)GameManager.Instance.intimacy / 100), rectTranIntimacy.sizeDelta.y);
 
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < sc_time; i++)
         {
 
-            //12초
-            Vector3 vec = new Vector3(0, 0, -(float)90 / 100);
+            
+            Vector3 vec = new Vector3(0, 0, -(float)90 / sc_time);
             clockStick.transform.Rotate(vec);
 
             Vector2 energy= new Vector2(Mathf.Min(400, rectTranEnergy.sizeDelta.x + 400 * ((float)DatabaseManager.Instance.scheduleDic[selectedSchedule[currentSchedule]].energy / 10000)),

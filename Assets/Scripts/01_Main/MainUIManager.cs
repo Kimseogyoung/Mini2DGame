@@ -38,6 +38,7 @@ public class MainUIManager : MonoBehaviour
     
     public Button btn_uiClean;
     public Button btn_uiOn;
+    public Button btn_makeScheduleParent;
     public Button btn_makeSchedule;
     public Button btn_inventory;
     public Button btn_phone;
@@ -51,6 +52,7 @@ public class MainUIManager : MonoBehaviour
 
 
     public Animator animatorDiary;
+    private Animator animatorMakeScheduleBtn;
     public void Start()
     {
         DialogueManager.Instance.SetDontDestroyed();
@@ -62,6 +64,9 @@ public class MainUIManager : MonoBehaviour
         UpdateUI();
         
         miniNoteObject.onClick.AddListener(ShowMiniNote);
+        btn_makeScheduleParent.onClick.AddListener(OpenMakeScheduleBtn);
+        animatorMakeScheduleBtn = btn_makeScheduleParent.GetComponent<Animator>();
+
         btn_makeSchedule.onClick.AddListener(OnClickMakeScheduleButton);
         btn_uiOn.onClick.AddListener(OnClickUIOnButton);
         btn_uiClean.onClick.AddListener(OnClickUICleanButton);
@@ -309,8 +314,15 @@ public class MainUIManager : MonoBehaviour
         {
             scheduleManager.PlayAlarmAnim("읽지않은 알림이 있습니다.");
         }
+        OpenMakeScheduleBtn();
         
         
+    }
+    private bool isScheduleBtnOpen=false;
+    void OpenMakeScheduleBtn()
+    {
+        isScheduleBtnOpen = !isScheduleBtnOpen;
+        animatorMakeScheduleBtn.SetBool("isOpen", isScheduleBtnOpen);
     }
 
     void OnClickUIOnButton()
